@@ -86,24 +86,22 @@ export function useFetchHook() {
             worker.postMessage({ type: 'fetch', url, fetchOptions });
             worker.addEventListener('message', ({ data: { data, type  } }: WorkerResponseType) => {
                 if (!controller?.signal?.aborted) {
-                    switch (type) {
-                        case 'success':
-                            if(cache) {
-                                let timestamp = Date.now();
-                                let cacheObject = {timestamp,data}
-                                set(url.toString(), cacheObject).then(() => {console.log("saved data")}).catch(() => {console.error("couldn't access indexDB to save data")});
-                            }
-                            dispatch({ type: 'data', data, url, fetchOptions })
-                            break;
-                        default:
+                    if (type === 'success') {
+                        dispatch({ type: 'data', data, url, fetchOptions })
+                        if(cache) {
+                            let timestamp = Date.now();
+                            let cacheObject = {timestamp,data}
+                            set(url.toString(), cacheObject)
+                                .then(() => {console.log("saved data")})
+                                .catch(() => {console.error("couldn't access indexedDB to save data")});
+                        } else {
                             dispatch({ type: 'error', error: new Error(type)});
-                            break;
+                        }
                     }
                 }
                 cleanupWorker(worker)
             });
         }
     }
-    const nukeDB = () => clear()
-    return { fetchWorker, nukeDB, ...state! };
+    return { fetchWorker, nukeDB: clear, ...state! };
 };
