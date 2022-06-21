@@ -21,5 +21,6 @@ __tests__
 *.njsproj
 *.sln
 *.sw?
-*vites?t?.config.ts
+vite.config.ts
+vitest.config.ts
 *.tsconfig.*
