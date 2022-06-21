@@ -1,0 +1,30 @@
+{
+  "name": "react-fetch",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "prepack": "json -f package.json -I -e \"delete this.devDependencies; delete this.dependencies\"",
+    "test": "vitest --config ./vitest.config.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/react-fetch.umd.js",
+  "module": "./dist/react-fetch.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/react-fetch.es.js",
+      "require": "./dist/react-fetch.umd.js"
+    }
+  },
+  "dependencies": {
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "vite-plugin-dts": "^1.2.0"
+  }
+}
