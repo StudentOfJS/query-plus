@@ -25,6 +25,7 @@
     "react": "^18.2.0"
   },
   "devDependencies": {
+    "@types/node": "^18.0.0",
     "vite-plugin-dts": "^1.2.0"
   }
 }
