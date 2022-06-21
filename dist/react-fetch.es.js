@@ -18,6 +18,7 @@ var __spreadValues = (a, b) => {
 };
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 import { useReducer, useRef, useEffect } from "react";
+import { get, del, set, clear } from "idb-keyval";
 const encodedJs = "dmFyIHU9T2JqZWN0LmRlZmluZVByb3BlcnR5LGg9T2JqZWN0LmRlZmluZVByb3BlcnRpZXM7dmFyIGc9T2JqZWN0LmdldE93blByb3BlcnR5RGVzY3JpcHRvcnM7dmFyIG49T2JqZWN0LmdldE93blByb3BlcnR5U3ltYm9sczt2YXIgZD1PYmplY3QucHJvdG90eXBlLmhhc093blByb3BlcnR5LHc9T2JqZWN0LnByb3RvdHlwZS5wcm9wZXJ0eUlzRW51bWVyYWJsZTt2YXIgbD0ocyx0LGUpPT50IGluIHM/dShzLHQse2VudW1lcmFibGU6ITAsY29uZmlndXJhYmxlOiEwLHdyaXRhYmxlOiEwLHZhbHVlOmV9KTpzW3RdPWUsYz0ocyx0KT0+e2Zvcih2YXIgZSBpbiB0fHwodD17fSkpZC5jYWxsKHQsZSkmJmwocyxlLHRbZV0pO2lmKG4pZm9yKHZhciBlIG9mIG4odCkpdy5jYWxsKHQsZSkmJmwocyxlLHRbZV0pO3JldHVybiBzfSxpPShzLHQpPT5oKHMsZyh0KSk7KGZ1bmN0aW9uKCl7InVzZSBzdHJpY3QiO3NlbGYuYWRkRXZlbnRMaXN0ZW5lcigibWVzc2FnZSIscz0+e2NvbnN0e3R5cGU6dH09cy5kYXRhO2xldCBlPW5ldyBBYm9ydENvbnRyb2xsZXIsYT1lLnNpZ25hbDtpZih0PT09ImNhbmNlbCImJmUuc2lnbmFsLmFib3J0KCksdD09PSJmZXRjaCIpe2NvbnN0e3VybDpmLG9wdGlvbnM6b309cy5kYXRhO2ZldGNoKGYsbz9pKGMoe30sbykse3NpZ25hbDphfSk6e3NpZ25hbDphfSkudGhlbihyPT57aWYoIXIub2t8fHIuc3RhdHVzPT09NDA0KXRocm93IG5ldyBFcnJvcihgSFRUUCBlcnJvciEgU3RhdHVzOiAke3Iuc3RhdHVzfWApO2lmKHIuc3RhdHVzPT09NDAzKXRocm93IG5ldyBFcnJvcigiVW5hdXRob3JpemVkISIpO3JldHVybiByLmpzb24oKX0pLnRoZW4ocj0+e3NlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6InN1Y2Nlc3MiLGRhdGE6cn0pLGU9dm9pZCAwfSkuY2F0Y2gocj0+e3NlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6ci5tZXNzYWdlfHwiVW5rbm93biBlcnJvciJ9KX0pfX0pfSkoKTsK";
 const blob = typeof window !== "undefined" && window.Blob && new Blob([atob(encodedJs)], { type: "text/javascript;charset=utf-8" });
 function WorkerWrapper() {
@@ -38,10 +39,15 @@ function cleanupWorker(worker) {
 }
 function reducer(state, action) {
   switch (action.type) {
+    case "nuke":
+      return __spreadProps(__spreadValues({}, state), {
+        nuked: true
+      });
     case "data":
       return __spreadProps(__spreadValues({}, state), {
         data: action.data,
         loading: false,
+        nuked: false,
         error: void 0
       });
     case "clearError":
@@ -65,6 +71,7 @@ const initialState = {
   data: void 0,
   error: void 0,
   loading: false,
+  nuked: false,
   update: true
 };
 function useFetchHook() {
@@ -94,35 +101,30 @@ function useFetchHook() {
       cleanupWorker(worker);
     };
   }, [window, sharedRef.current.controller]);
-  const fetchWorker = ({
+  const fetchWorker = async ({
     url,
-    options,
+    fetchOptions,
     cache = false,
     maxAge = DAY
   }) => {
     cleanupWorker(worker);
-    let update = !cache;
-    if (cache) {
-      let storedDataString = sessionStorage.getItem(url.toString());
-      if (storedDataString) {
-        let {
-          data,
-          timestamp
-        } = JSON.parse(storedDataString);
-        if (timestamp + maxAge > Date.now()) {
-          dispatch({
-            type: "data",
-            data
-          });
-        } else {
-          update = true;
-        }
-      } else {
-        update = true;
+    let next = cache ? await get(url.toString()).then((value) => {
+      if (!(value == null ? void 0 : value.timestamp)) {
+        return true;
       }
-    }
-    if (window && update) {
-      sessionStorage.removeItem(url.toString());
+      if ((value == null ? void 0 : value.timestamp) + maxAge <= Date.now()) {
+        del(url.toString());
+        return true;
+      }
+      console.log("cache hit", url.toString());
+      dispatch({
+        type: "data",
+        data: value == null ? void 0 : value.data
+      });
+      return false;
+    }) : true;
+    if (window && next) {
+      del(url.toString());
       worker = new WorkerWrapper();
       dispatch({
         type: "loading",
@@ -131,7 +133,7 @@ function useFetchHook() {
       worker.postMessage({
         type: "fetch",
         url,
-        options
+        fetchOptions
       });
       worker.addEventListener("message", ({
         data: {
@@ -149,14 +151,17 @@ function useFetchHook() {
                   timestamp,
                   data
                 };
-                let dataString = JSON.stringify(cacheObject);
-                sessionStorage.setItem(url.toString(), dataString);
+                set(url.toString(), cacheObject).then(() => {
+                  console.log("saved data");
+                }).catch(() => {
+                  console.error("couldn't access indexDB to save data");
+                });
               }
               dispatch({
                 type: "data",
                 data,
                 url,
-                options
+                fetchOptions
               });
               break;
             default:
@@ -171,8 +176,10 @@ function useFetchHook() {
       });
     }
   };
+  const nukeDB = () => clear();
   return __spreadValues({
-    fetchWorker
+    fetchWorker,
+    nukeDB
   }, state);
 }
 export { useFetchHook };

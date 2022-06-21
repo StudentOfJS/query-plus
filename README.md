@@ -3,7 +3,7 @@
   react-fetch
 </h1>
 <p align="center">
-  React hook for using fetch in a web worker and optional sessionStorage caching
+  React hook for using fetch in a web worker and optional data caching in IndexedDB
 </p>
 <p align="center">
   <img src="https://repository-images.githubusercontent.com/505699390/51d26170-2c9e-4db3-91fd-8799a6f23651" width="1000" alt="code example">

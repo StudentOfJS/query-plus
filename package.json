@@ -22,6 +22,7 @@
     }
   },
   "dependencies": {
+    "idb-keyval": "^6.2.0",
     "react": "^18.2.0"
   },
   "devDependencies": {

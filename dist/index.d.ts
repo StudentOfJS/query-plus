@@ -1,3 +1,3 @@
-import MyLib from './lib/index'
-export default MyLib
+import react-fetch from './lib/index'
+export default react-fetch
 export * from './lib/index'

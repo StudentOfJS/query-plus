@@ -1,4 +1,6 @@
 import { useRef, useEffect, useReducer } from "react";
+import { clear, del, get, set } from 'idb-keyval';
+
 import InlineFetchWorker from './worker.js?worker&inline'
 
 type UnknownDataResponseType = Array<unknown> | Record<string, unknown> | undefined
@@ -14,8 +16,10 @@ function cleanupWorker(worker: Worker | undefined) {
 }
 function reducer(state: any, action: any) {
     switch (action.type) {
+        case 'nuke':
+            return { ...state, nuked: true }
         case 'data':
-            return { ...state, data: action.data, loading: false, error: void 0 }
+            return { ...state, data: action.data, loading: false, nuked: false, error: void 0 }
         case 'clearError':
             return { ...state, error: undefined };
         case 'error':
@@ -26,18 +30,25 @@ function reducer(state: any, action: any) {
             return state
     }
 }
-interface StateType {
-    url?: RequestInfo | URL
-    options?: RequestInit | undefined
+export interface FetchWorkerProps {
+    cache?: boolean
+    fetchOptions?: RequestInit | undefined
+    maxAge: number
+    // middleware?: (data: UnknownDataResponseType) => UnknownDataResponseType
+    url: RequestInfo | URL
+}
+export interface StateType {
     data: UnknownDataResponseType;
     error?: Error;
     loading: boolean;
+    nuked: boolean;
     update: boolean;
 }
 const initialState: StateType = {
     data: undefined,
     error: undefined,
     loading: false,
+    nuked: false,
     update: true
 }
 export function useFetchHook() {
@@ -55,27 +66,24 @@ export function useFetchHook() {
         }
     }, [window, sharedRef.current.controller]);
 
-    const fetchWorker = ({url, options, cache = false, maxAge=DAY}: {url: RequestInfo | URL, options?: RequestInit | undefined, cache?: boolean, maxAge: number}) => {
+    const fetchWorker = async ({url, fetchOptions, cache = false, maxAge=DAY }: FetchWorkerProps) => {
         cleanupWorker(worker);
-        let update = !cache
-        if(cache) {
-            let storedDataString = sessionStorage.getItem(url.toString());
-            if (storedDataString) {
-                let {data, timestamp} = JSON.parse(storedDataString)
-                if (timestamp + maxAge > Date.now()) {
-                    dispatch({ type: 'data', data });
-                } else {
-                    update = true
-                }
-            } else {
-                update = true
+        let next = cache ? await get(url.toString()).then((value) => {
+            if(!value?.timestamp) {return true}
+            if(value?.timestamp + maxAge <= Date.now()) {
+                del(url.toString());
+                return true;
             }
-        }
-        if (window && update) {
-            sessionStorage.removeItem(url.toString());
+            console.log('cache hit', url.toString());
+            dispatch({ type: 'data', data: value?.data });
+            return false;
+        }) : true;
+        
+        if (window && next) {
+            del(url.toString());
             worker = new InlineFetchWorker();
             dispatch({ type: 'loading', loading: true });
-            worker.postMessage({ type: 'fetch', url, options });
+            worker.postMessage({ type: 'fetch', url, fetchOptions });
             worker.addEventListener('message', ({ data: { data, type  } }: WorkerResponseType) => {
                 if (!controller?.signal?.aborted) {
                     switch (type) {
@@ -83,10 +91,9 @@ export function useFetchHook() {
                             if(cache) {
                                 let timestamp = Date.now();
                                 let cacheObject = {timestamp,data}
-                                let dataString = JSON.stringify(cacheObject);
-                                sessionStorage.setItem(url.toString(), dataString);
+                                set(url.toString(), cacheObject).then(() => {console.log("saved data")}).catch(() => {console.error("couldn't access indexDB to save data")});
                             }
-                            dispatch({ type: 'data', data, url, options })
+                            dispatch({ type: 'data', data, url, fetchOptions })
                             break;
                         default:
                             dispatch({ type: 'error', error: new Error(type)});
@@ -97,5 +104,6 @@ export function useFetchHook() {
             });
         }
     }
-    return { fetchWorker, ...state! };
+    const nukeDB = () => clear()
+    return { fetchWorker, nukeDB, ...state! };
 };
