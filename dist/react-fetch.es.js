@@ -112,7 +112,9 @@ function useFetchHook() {
     maxAge = DAY
   }) => {
     cleanupWorker(worker);
-    let next = await get(url.toString()).then((value) => {
+    let method = (fetchOptions == null ? void 0 : fetchOptions.method) || "GET";
+    let methodIsGet = method.toLowerCase() === "get";
+    let next = methodIsGet ? await get(url.toString()).then((value) => {
       if (!(value == null ? void 0 : value.timestamp)) {
         return true;
       }
@@ -126,9 +128,9 @@ function useFetchHook() {
         data: value == null ? void 0 : value.data
       });
       return cache ? false : true;
-    });
+    }) : true;
     if (window && next) {
-      del(url.toString());
+      methodIsGet && del(url.toString());
       worker = new WorkerWrapper();
       dispatch({
         type: "loading",
@@ -154,7 +156,7 @@ function useFetchHook() {
               url,
               fetchOptions
             });
-            if (cache) {
+            if (cache && methodIsGet) {
               let timestamp = Date.now();
               let cacheObject = {
                 timestamp,
@@ -165,12 +167,12 @@ function useFetchHook() {
               }).catch(() => {
                 console.error("couldn't access indexedDB to save data");
               });
-            } else {
-              dispatch({
-                type: "error",
-                error: new Error(type)
-              });
             }
+          } else {
+            dispatch({
+              type: "error",
+              error: new Error(type)
+            });
           }
         }
         cleanupWorker(worker);
