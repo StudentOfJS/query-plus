@@ -1,3 +1,9 @@
+/* 
+    @todo consider how to handle non GET requests
+    @todo consider how to handle non JSON responses
+    @todo do we need to create useStore hook?
+*/
+
 import { useRef, useEffect, useReducer } from "react";
 import { clear, del, get, set } from 'idb-keyval';
 
@@ -53,7 +59,7 @@ const initialState: StateType = {
     nuked: false,
     update: true
 }
-export function useFetchHook() {
+export function useFetch() {
     const [state, dispatch] = useReducer(reducer, initialState);
     const sharedRef = useRef<{ worker?: Worker; controller?: AbortController }>({ worker: undefined, controller: new AbortController() });
     let { worker, controller } = sharedRef.current;
