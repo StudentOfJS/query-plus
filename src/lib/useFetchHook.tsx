@@ -18,6 +18,8 @@ function reducer(state: any, action: any) {
     switch (action.type) {
         case 'nuke':
             return { ...state, nuked: true }
+        case 'pre-load':
+            return { ...state, data: action.data }
         case 'data':
             return { ...state, data: action.data, loading: false, nuked: false, error: void 0 }
         case 'clearError':
@@ -59,43 +61,43 @@ export function useFetchHook() {
         if (!window && !sharedRef?.current?.controller?.signal?.aborted) {
             dispatch({ type: 'loading', loading: false });
             dispatch({ type: 'error', error: new Error('window is not defined') });
-            cleanupWorker(worker)
+            cleanupWorker(worker);
         }
         return () => {
-            cleanupWorker(worker)
+            cleanupWorker(worker);
         }
     }, [window, sharedRef.current.controller]);
 
-    const fetchWorker = async ({url, fetchOptions, cache = false, maxAge=DAY }: FetchWorkerProps) => {
+    const fetchWorker = async ({ url, fetchOptions, cache = false, maxAge = DAY }: FetchWorkerProps) => {
         cleanupWorker(worker);
-        let next = cache ? await get(url.toString()).then((value) => {
-            if(!value?.timestamp) {return true}
-            if(value?.timestamp + maxAge <= Date.now()) {
+        let next = await get(url.toString()).then((value) => {
+            if (!value?.timestamp) { return true }
+            if (value?.timestamp + maxAge <= Date.now()) {
                 del(url.toString());
                 return true;
             }
             console.log('cache hit', url.toString());
-            dispatch({ type: 'data', data: value?.data });
-            return false;
-        }) : true;
-        
+            dispatch({ type: cache ? 'data' : 'pre-load', data: value?.data });
+            return cache ? false : true;
+        })
+
         if (window && next) {
             del(url.toString());
             worker = new InlineFetchWorker();
             dispatch({ type: 'loading', loading: true });
             worker.postMessage({ type: 'fetch', url, fetchOptions });
-            worker.addEventListener('message', ({ data: { data, type  } }: WorkerResponseType) => {
+            worker.addEventListener('message', ({ data: { data, type } }: WorkerResponseType) => {
                 if (!controller?.signal?.aborted) {
                     if (type === 'success') {
                         dispatch({ type: 'data', data, url, fetchOptions })
-                        if(cache) {
+                        if (cache) {
                             let timestamp = Date.now();
-                            let cacheObject = {timestamp,data}
+                            let cacheObject = { timestamp, data }
                             set(url.toString(), cacheObject)
-                                .then(() => {console.log("saved data")})
-                                .catch(() => {console.error("couldn't access indexedDB to save data")});
+                                .then(() => { console.log("saved data") })
+                                .catch(() => { console.error("couldn't access indexedDB to save data") });
                         } else {
-                            dispatch({ type: 'error', error: new Error(type)});
+                            dispatch({ type: 'error', error: new Error(type) });
                         }
                     }
                 }
@@ -103,5 +105,6 @@ export function useFetchHook() {
             });
         }
     }
-    return { fetchWorker, nukeDB: clear, ...state! };
+    const nukeDB = () => {clear()}
+    return { fetchWorker, nukeDB, ...state! };
 };
