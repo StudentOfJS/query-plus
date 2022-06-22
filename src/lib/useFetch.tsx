@@ -1,6 +1,6 @@
 /**
- * 
- * @todo consider how to handle non GET requests
+ * @todo polling option
+ * @todo work on READ.ME
  */
 
 import { useRef, useEffect, useReducer } from "react";
