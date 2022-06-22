@@ -17,8 +17,8 @@ var __spreadValues = (a, b) => {
   return a;
 };
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
-import { useReducer, useRef, useEffect } from "react";
-import { get, del, set, clear } from "idb-keyval";
+import { useRef, useEffect, useReducer } from "react";
+import { createStore, clear, del, get, getMany, set, setMany, update } from "idb-keyval";
 const encodedJs = "dmFyIHU9T2JqZWN0LmRlZmluZVByb3BlcnR5LGg9T2JqZWN0LmRlZmluZVByb3BlcnRpZXM7dmFyIGc9T2JqZWN0LmdldE93blByb3BlcnR5RGVzY3JpcHRvcnM7dmFyIG49T2JqZWN0LmdldE93blByb3BlcnR5U3ltYm9sczt2YXIgZD1PYmplY3QucHJvdG90eXBlLmhhc093blByb3BlcnR5LHc9T2JqZWN0LnByb3RvdHlwZS5wcm9wZXJ0eUlzRW51bWVyYWJsZTt2YXIgbD0ocyx0LGUpPT50IGluIHM/dShzLHQse2VudW1lcmFibGU6ITAsY29uZmlndXJhYmxlOiEwLHdyaXRhYmxlOiEwLHZhbHVlOmV9KTpzW3RdPWUsYz0ocyx0KT0+e2Zvcih2YXIgZSBpbiB0fHwodD17fSkpZC5jYWxsKHQsZSkmJmwocyxlLHRbZV0pO2lmKG4pZm9yKHZhciBlIG9mIG4odCkpdy5jYWxsKHQsZSkmJmwocyxlLHRbZV0pO3JldHVybiBzfSxpPShzLHQpPT5oKHMsZyh0KSk7KGZ1bmN0aW9uKCl7InVzZSBzdHJpY3QiO3NlbGYuYWRkRXZlbnRMaXN0ZW5lcigibWVzc2FnZSIscz0+e2NvbnN0e3R5cGU6dH09cy5kYXRhO2xldCBlPW5ldyBBYm9ydENvbnRyb2xsZXIsYT1lLnNpZ25hbDtpZih0PT09ImNhbmNlbCImJmUuc2lnbmFsLmFib3J0KCksdD09PSJmZXRjaCIpe2NvbnN0e3VybDpmLG9wdGlvbnM6b309cy5kYXRhO2ZldGNoKGYsbz9pKGMoe30sbykse3NpZ25hbDphfSk6e3NpZ25hbDphfSkudGhlbihyPT57aWYoIXIub2t8fHIuc3RhdHVzPT09NDA0KXRocm93IG5ldyBFcnJvcihgSFRUUCBlcnJvciEgU3RhdHVzOiAke3Iuc3RhdHVzfWApO2lmKHIuc3RhdHVzPT09NDAzKXRocm93IG5ldyBFcnJvcigiVW5hdXRob3JpemVkISIpO3JldHVybiByLmpzb24oKX0pLnRoZW4ocj0+e3NlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6InN1Y2Nlc3MiLGRhdGE6cn0pLGU9dm9pZCAwfSkuY2F0Y2gocj0+e3NlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6ci5tZXNzYWdlfHwiVW5rbm93biBlcnJvciJ9KX0pfX0pfSkoKTsK";
 const blob = typeof window !== "undefined" && window.Blob && new Blob([atob(encodedJs)], { type: "text/javascript;charset=utf-8" });
 function WorkerWrapper() {
@@ -29,6 +29,26 @@ function WorkerWrapper() {
     objURL && (window.URL || window.webkitURL).revokeObjectURL(objURL);
   }
 }
+const DB_NAME = "usestore-db";
+const DB_STORE = "usestore-db";
+const useStore = (persistData = true, storeName = DB_STORE) => {
+  const store = useRef();
+  useEffect(() => {
+    store.current = createStore(DB_NAME, storeName);
+    return () => {
+      !persistData && clear(store.current);
+      store.current = void 0;
+    };
+  }, []);
+  return {
+    del: (key) => del(key, store.current),
+    get: (key) => get(key, store.current),
+    getMany: (keys) => getMany(keys, store.current),
+    set: (key, value) => set(key, value, store.current),
+    setMany: (entries) => setMany(entries, store.current),
+    update: (key, updater) => update(key, updater, store.current)
+  };
+};
 const DAY = 24 * 60 * 60 * 1e3;
 function cleanupWorker(worker) {
   worker == null ? void 0 : worker.postMessage({
@@ -78,7 +98,12 @@ const initialState = {
   nuked: false,
   update: true
 };
-function useFetchHook() {
+function useFetch() {
+  const {
+    del: del2,
+    get: get2,
+    set: set2
+  } = useStore();
   const [state, dispatch] = useReducer(reducer, initialState);
   const sharedRef = useRef({
     worker: void 0,
@@ -114,12 +139,12 @@ function useFetchHook() {
     cleanupWorker(worker);
     let method = (fetchOptions == null ? void 0 : fetchOptions.method) || "GET";
     let methodIsGet = method.toLowerCase() === "get";
-    let next = methodIsGet ? await get(url.toString()).then((value) => {
+    let next = methodIsGet ? await get2(url.toString()).then((value) => {
       if (!(value == null ? void 0 : value.timestamp)) {
         return true;
       }
       if ((value == null ? void 0 : value.timestamp) + maxAge <= Date.now()) {
-        del(url.toString());
+        del2(url.toString());
         return true;
       }
       console.log("cache hit", url.toString());
@@ -130,7 +155,7 @@ function useFetchHook() {
       return cache ? false : true;
     }) : true;
     if (window && next) {
-      methodIsGet && del(url.toString());
+      methodIsGet && del2(url.toString());
       worker = new WorkerWrapper();
       dispatch({
         type: "loading",
@@ -162,7 +187,7 @@ function useFetchHook() {
                 timestamp,
                 data
               };
-              set(url.toString(), cacheObject).then(() => {
+              set2(url.toString(), cacheObject).then(() => {
                 console.log("saved data");
               }).catch(() => {
                 console.error("couldn't access indexedDB to save data");
@@ -179,12 +204,8 @@ function useFetchHook() {
       });
     }
   };
-  const nukeDB = () => {
-    clear();
-  };
   return __spreadValues({
-    fetchWorker,
-    nukeDB
+    fetchWorker
   }, state);
 }
-export { useFetchHook };
+export { useFetch, useStore };

@@ -1,3 +1,7 @@
+/**
+ * @todo consider how to handle non GET requests
+ * @todo consider how to handle non JSON responses
+ */
 declare type UnknownDataResponseType = Array<unknown> | Record<string, unknown> | undefined;
 export interface FetchWorkerProps {
     cache?: boolean;
@@ -12,5 +16,5 @@ export interface StateType {
     nuked: boolean;
     update: boolean;
 }
-export declare function useFetchHook(): any;
+export declare function useFetch(): any;
 export {};
