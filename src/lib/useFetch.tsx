@@ -1,13 +1,12 @@
-/* 
-    @todo consider how to handle non GET requests
-    @todo consider how to handle non JSON responses
-    @todo do we need to create useStore hook?
-*/
+/**
+ * @todo consider how to handle non GET requests
+ * @todo consider how to handle non JSON responses
+ */
 
 import { useRef, useEffect, useReducer } from "react";
-import { clear, del, get, set } from 'idb-keyval';
 
 import InlineFetchWorker from './worker.js?worker&inline'
+import { useStore } from "./useStore";
 
 type UnknownDataResponseType = Array<unknown> | Record<string, unknown> | undefined
 type WorkerResponseType = MessageEvent<{
@@ -60,6 +59,7 @@ const initialState: StateType = {
     update: true
 }
 export function useFetch() {
+    const { del, get, set } = useStore()
     const [state, dispatch] = useReducer(reducer, initialState);
     const sharedRef = useRef<{ worker?: Worker; controller?: AbortController }>({ worker: undefined, controller: new AbortController() });
     let { worker, controller } = sharedRef.current;
@@ -113,6 +113,5 @@ export function useFetch() {
             });
         }
     }
-    const nukeDB = () => {clear()}
-    return { fetchWorker, nukeDB, ...state! };
+    return { fetchWorker, ...state! };
 };
