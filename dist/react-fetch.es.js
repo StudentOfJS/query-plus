@@ -51,52 +51,20 @@ const useStore = (persistData = true, storeName = DB_STORE) => {
 };
 const DAY = 24 * 60 * 60 * 1e3;
 function cleanupWorker(worker) {
-  worker == null ? void 0 : worker.postMessage({
-    type: "cancel"
-  });
+  worker == null ? void 0 : worker.postMessage({ type: "cancel" });
   worker == null ? void 0 : worker.terminate();
   worker = void 0;
 }
-function reducer(state, action) {
-  switch (action.type) {
-    case "nuke":
-      return __spreadProps(__spreadValues({}, state), {
-        nuked: true
-      });
-    case "pre-load":
-      return __spreadProps(__spreadValues({}, state), {
-        data: action.data
-      });
-    case "data":
-      return __spreadProps(__spreadValues({}, state), {
-        data: action.data,
-        loading: false,
-        nuked: false,
-        error: void 0
-      });
-    case "clearError":
-      return __spreadProps(__spreadValues({}, state), {
-        error: void 0
-      });
-    case "error":
-      return __spreadProps(__spreadValues({}, state), {
-        error: action.error,
-        loading: false
-      });
-    case "loading":
-      return __spreadProps(__spreadValues({}, state), {
-        loading: action.loading
-      });
-    default:
-      return state;
-  }
-}
-const initialState = {
-  data: void 0,
-  error: void 0,
-  loading: false,
-  nuked: false,
-  update: true
+const dataExpired = (maxAge, timestamp = 0) => timestamp + maxAge > Date.now();
+const methodType = (options) => {
+  var _a;
+  let method = ((_a = options == null ? void 0 : options.method) == null ? void 0 : _a.toUpperCase()) || "GET";
+  return {
+    isGet: method === "GET",
+    isPost: method === "POST",
+    isPut: method === "PUT",
+    isDelete: method === "DELETE"
+  };
 };
 function useFetch() {
   const {
@@ -137,13 +105,12 @@ function useFetch() {
     maxAge = DAY
   }) => {
     cleanupWorker(worker);
-    let method = (fetchOptions == null ? void 0 : fetchOptions.method) || "GET";
-    let methodIsGet = method.toLowerCase() === "get";
-    let next = methodIsGet ? await get2(url.toString()).then((value) => {
+    let method = methodType(fetchOptions);
+    let next = method.isGet ? await get2(url.toString()).then((value) => {
       if (!(value == null ? void 0 : value.timestamp)) {
         return true;
       }
-      if ((value == null ? void 0 : value.timestamp) + maxAge <= Date.now()) {
+      if (!dataExpired(maxAge, value == null ? void 0 : value.timestamp)) {
         del2(url.toString());
         return true;
       }
@@ -155,7 +122,7 @@ function useFetch() {
       return cache ? false : true;
     }) : true;
     if (window && next) {
-      methodIsGet && del2(url.toString());
+      method.isGet && del2(url.toString());
       worker = new WorkerWrapper();
       dispatch({
         type: "loading",
@@ -175,13 +142,17 @@ function useFetch() {
         var _a;
         if (!((_a = controller == null ? void 0 : controller.signal) == null ? void 0 : _a.aborted)) {
           if (type === "success") {
+            if (method.isDelete || !data) {
+              return dispatch({
+                type: "loading",
+                loading: false
+              });
+            }
             dispatch({
               type: "data",
-              data,
-              url,
-              fetchOptions
+              data
             });
-            if (cache && methodIsGet) {
+            if (cache && method.isGet) {
               let timestamp = Date.now();
               let cacheObject = {
                 timestamp,
@@ -207,5 +178,40 @@ function useFetch() {
   return __spreadValues({
     fetchWorker
   }, state);
+}
+const initialState = {
+  data: void 0,
+  error: void 0,
+  loading: false,
+  update: true
+};
+function reducer(state, action) {
+  switch (action.type) {
+    case "pre-load":
+      return __spreadProps(__spreadValues({}, state), {
+        data: action.data
+      });
+    case "data":
+      return __spreadProps(__spreadValues({}, state), {
+        data: action.data,
+        loading: false,
+        error: void 0
+      });
+    case "clearError":
+      return __spreadProps(__spreadValues({}, state), {
+        error: void 0
+      });
+    case "error":
+      return __spreadProps(__spreadValues({}, state), {
+        error: action.error,
+        loading: false
+      });
+    case "loading":
+      return __spreadProps(__spreadValues({}, state), {
+        loading: action.loading
+      });
+    default:
+      return state;
+  }
 }
 export { useFetch, useStore };

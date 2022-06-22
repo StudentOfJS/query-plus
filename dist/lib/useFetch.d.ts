@@ -1,6 +1,6 @@
 /**
+ *
  * @todo consider how to handle non GET requests
- * @todo consider how to handle non JSON responses
  */
 declare type UnknownDataResponseType = Array<unknown> | Record<string, unknown> | undefined;
 export interface FetchWorkerProps {
@@ -9,12 +9,16 @@ export interface FetchWorkerProps {
     maxAge: number;
     url: RequestInfo | URL;
 }
+/**
+ * useFetch is a React hook that can be initialized with no params.
+ * @example const { data, error, loading, fetchWorker } = useFetch()
+ *
+ */
+export declare function useFetch(): any;
 export interface StateType {
     data: UnknownDataResponseType;
     error?: Error;
     loading: boolean;
-    nuked: boolean;
     update: boolean;
 }
-export declare function useFetch(): any;
 export {};

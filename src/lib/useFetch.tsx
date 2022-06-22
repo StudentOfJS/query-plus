@@ -1,42 +1,20 @@
 /**
+ * 
  * @todo consider how to handle non GET requests
- * @todo consider how to handle non JSON responses
  */
 
 import { useRef, useEffect, useReducer } from "react";
 
 import InlineFetchWorker from './worker.js?worker&inline'
 import { useStore } from "./useStore";
+import { cleanupWorker, dataExpired, DAY, methodType } from "./utils";
 
 type UnknownDataResponseType = Array<unknown> | Record<string, unknown> | undefined
 type WorkerResponseType = MessageEvent<{
     type: string;
     data?: UnknownDataResponseType
 }>
-const DAY = 24 * 60 * 60 * 1000;
-function cleanupWorker(worker: Worker | undefined) {
-    worker?.postMessage({ type: 'cancel' });
-    worker?.terminate();
-    worker = void 0;
-}
-function reducer(state: any, action: any) {
-    switch (action.type) {
-        case 'nuke':
-            return { ...state, nuked: true }
-        case 'pre-load':
-            return { ...state, data: action.data }
-        case 'data':
-            return { ...state, data: action.data, loading: false, nuked: false, error: void 0 }
-        case 'clearError':
-            return { ...state, error: undefined };
-        case 'error':
-            return { ...state, error: action.error, loading: false }
-        case 'loading':
-            return { ...state, loading: action.loading }
-        default:
-            return state
-    }
-}
+
 export interface FetchWorkerProps {
     cache?: boolean
     fetchOptions?: RequestInit | undefined
@@ -44,20 +22,11 @@ export interface FetchWorkerProps {
     // middleware?: (data: UnknownDataResponseType) => UnknownDataResponseType
     url: RequestInfo | URL
 }
-export interface StateType {
-    data: UnknownDataResponseType;
-    error?: Error;
-    loading: boolean;
-    nuked: boolean;
-    update: boolean;
-}
-const initialState: StateType = {
-    data: undefined,
-    error: undefined,
-    loading: false,
-    nuked: false,
-    update: true
-}
+/**
+ * useFetch is a React hook that can be initialized with no params.
+ * @example const { data, error, loading, fetchWorker } = useFetch()
+ * 
+ */
 export function useFetch() {
     const { del, get, set } = useStore()
     const [state, dispatch] = useReducer(reducer, initialState);
@@ -74,13 +43,13 @@ export function useFetch() {
         }
     }, [window, sharedRef.current.controller]);
 
+    
     const fetchWorker = async ({ url, fetchOptions, cache = false, maxAge = DAY }: FetchWorkerProps) => {
         cleanupWorker(worker);
-        let method = fetchOptions?.method || 'GET';
-        let methodIsGet = method.toLowerCase() === 'get';
-        let next = methodIsGet ? await get(url.toString()).then((value) => {
+        let method = methodType(fetchOptions)
+        let next = method.isGet ? await get(url.toString()).then((value) => {
             if (!value?.timestamp) { return true }
-            if (value?.timestamp + maxAge <= Date.now()) {
+            if (!dataExpired(maxAge, value?.timestamp)) {
                 del(url.toString());
                 return true;
             }
@@ -90,15 +59,18 @@ export function useFetch() {
         }) : true
 
         if (window && next) {
-            methodIsGet && del(url.toString());
+            method.isGet && del(url.toString());
             worker = new InlineFetchWorker();
             dispatch({ type: 'loading', loading: true });
             worker.postMessage({ type: 'fetch', url, fetchOptions });
             worker.addEventListener('message', ({ data: { data, type } }: WorkerResponseType) => {
                 if (!controller?.signal?.aborted) {
                     if (type === 'success') {
-                        dispatch({ type: 'data', data, url, fetchOptions })
-                        if (cache && methodIsGet) {
+                        if(method.isDelete || !data) {
+                            return dispatch({type:'loading', loading: false})
+                        }
+                        dispatch({ type: 'data', data })
+                        if (cache && method.isGet) {
                             let timestamp = Date.now();
                             let cacheObject = { timestamp, data }
                             set(url.toString(), cacheObject)
@@ -115,3 +87,34 @@ export function useFetch() {
     }
     return { fetchWorker, ...state! };
 };
+
+export interface StateType {
+    data: UnknownDataResponseType;
+    error?: Error;
+    loading: boolean;
+    update: boolean;
+}
+
+const initialState: StateType = {
+    data: undefined,
+    error: undefined,
+    loading: false,
+    update: true
+}
+
+function reducer(state: any, action: any) {
+    switch (action.type) {
+        case 'pre-load':
+            return { ...state, data: action.data }
+        case 'data':
+            return { ...state, data: action.data, loading: false, error: void 0 }
+        case 'clearError':
+            return { ...state, error: undefined };
+        case 'error':
+            return { ...state, error: action.error, loading: false }
+        case 'loading':
+            return { ...state, loading: action.loading }
+        default:
+            return state
+    }
+}
