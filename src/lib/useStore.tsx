@@ -1,7 +1,8 @@
 /**
- * @todo add maxAge + timestamp to value object on set
- * @todo check maxAge + timestamp on get
- * @todo do we need all of this?
+ * @example const { del, get, set, update } = useStore()
+ * @todo consider creating a new store per request and adding all fields as key value pairs
+ * create stores base key value pair 
+ * @todo consider upgrading to idb
 */
 import { useEffect, useRef } from "react";
 import { clear, del, get, getMany, set, setMany, update, createStore } from 'idb-keyval';
@@ -13,7 +14,8 @@ export interface UseStoreProps {
 }
 const DB_NAME = 'usestore-db'
 const DB_STORE = 'usestore-db'
-export const useStore = (persistData: boolean = true, storeName: string = DB_STORE) => {
+export const useStore = (props?:Partial<UseStoreProps>) => {
+    const {persistData, storeName} = {persistData: true, storeName: DB_STORE, ...props!}
     const store = useRef<UseStore>()
 
     useEffect(() => {

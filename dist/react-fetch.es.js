@@ -31,7 +31,14 @@ function WorkerWrapper() {
 }
 const DB_NAME = "usestore-db";
 const DB_STORE = "usestore-db";
-const useStore = (persistData = true, storeName = DB_STORE) => {
+const useStore = (props) => {
+  const {
+    persistData,
+    storeName
+  } = __spreadValues({
+    persistData: true,
+    storeName: DB_STORE
+  }, props);
   const store = useRef();
   useEffect(() => {
     store.current = createStore(DB_NAME, storeName);

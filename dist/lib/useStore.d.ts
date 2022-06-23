@@ -2,7 +2,7 @@ export interface UseStoreProps {
     persistData: boolean;
     storeName: string;
 }
-export declare const useStore: (persistData?: boolean, storeName?: string) => {
+export declare const useStore: (props?: Partial<UseStoreProps> | undefined) => {
     del: (key: IDBValidKey) => Promise<void>;
     get: (key: IDBValidKey) => Promise<any>;
     getMany: (keys: Array<IDBValidKey>) => Promise<any[]>;
