@@ -1,24 +1,11 @@
-import { startTransition } from 'react';
-
 export * from './state_tools'
 export const DAY = 24 * 60 * 60 * 1000;
-
+export const isObject = (obj: unknown) => typeof obj === 'object' && !Array.isArray(obj) && obj !== null;
 export function cleanupWorker(worker: Worker | undefined) {
     worker?.postMessage({ type: 'cancel' });
-    startTransition(() => {
         worker?.terminate();
-        worker = void 0;
-    })
-    
+        worker = void 0;    
 }
 
 export const dataExpired = (maxAge: number,timestamp: number = 0) => timestamp + maxAge > Date.now()
-export const methodType = (options: RequestInit | undefined) => {
-    let method = options?.method?.toUpperCase() || 'GET';
-    return {
-        isGet: method === 'GET',
-        isPost: method === 'POST',
-        isPut: method === 'PUT',
-        isDelete: method === 'DELETE',
-    }
-}
+export const methodType = (options: RequestInit | undefined) => options?.method?.toUpperCase() || 'GET';

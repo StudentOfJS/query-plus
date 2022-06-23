@@ -1,11 +1,11 @@
 /**
- * @todo polling option
- * @todo work on READ.ME
+ * @todo complete pollWorker function
+ * @todo export usePolling hook
  */
 
 import { useRef, useEffect, useReducer } from "react";
 
-import PollingWorker from './polling_worker.js?worker&inline'
+import PollingWorker from './workers/polling_worker.js?worker&inline'
 import { useStore } from "./useStore";
 import { cleanupWorker, dataExpired, methodType, reducer } from "./utils";
 
@@ -47,7 +47,7 @@ export function usePolling() {
     let worker = workerRef.current;
 
     const pollWorker = async ({url, fetchOptions, interval, maxAttempts, currentJSON, compareKeys}: PollingWorkerProps) => {
-        if(!methodType(fetchOptions).isGet) {
+        if(methodType(fetchOptions) !== 'GET') {
             return dispatch({ type: 'error', error: new Error('method must be GET to poll') });
         }
         let currentData = {}

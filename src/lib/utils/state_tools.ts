@@ -4,8 +4,6 @@ export function reducer(state: any, action: any) {
             return { ...state, data: action.data }
         case 'data':
             return { ...state, data: action.data, loading: false, error: void 0 }
-        case 'clearError':
-            return { ...state, error: undefined };
         case 'error':
             return { ...state, error: action.error, loading: false }
         case 'loading':

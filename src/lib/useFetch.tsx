@@ -1,14 +1,15 @@
 /**
- * @todo polling option
  * @todo allow multiple queries - data array of json or keyed (by url) single object
+ * @todo handle query strings
  * @todo work on READ.ME
+ * @todo update fetchWorker to compare data like pollingWorker
  */
 
 import { useRef, useEffect, useReducer } from "react";
 
-import FetchWorker from './fetch_worker.js?worker&inline'
+import FetchWorker from './workers/fetch_worker.js?worker&inline'
 import { useStore } from "./useStore";
-import { cleanupWorker, dataExpired, DAY, methodType } from "./utils";
+import { cleanupWorker, dataExpired, DAY, isObject, methodType, reducer } from "./utils";
 
 type UnknownDataResponseType = Array<unknown> | Record<string, unknown> | undefined
 type WorkerResponseType = MessageEvent<{
@@ -17,7 +18,6 @@ type WorkerResponseType = MessageEvent<{
 }>
 
 export interface FetchWorkerProps {
-    cache?: boolean
     fetchOptions?: RequestInit | undefined
     maxAge: number
     // middleware?: (data: UnknownDataResponseType) => UnknownDataResponseType
@@ -29,63 +29,62 @@ export interface FetchWorkerProps {
  * 
  */
 export function useFetch() {
-    const { del, get, set } = useStore()
+    const { del, get, set, update } = useStore()
     const [state, dispatch] = useReducer(reducer, initialState);
-    const sharedRef = useRef<{ worker?: Worker; controller?: AbortController }>({ worker: undefined, controller: new AbortController() });
-    let { worker, controller } = sharedRef.current;
-    const fetchWorker = async ({ url, fetchOptions, cache = false, maxAge = DAY }: FetchWorkerProps) => {
-        cleanupWorker(worker);
+    const workerRef = useRef<Worker>();
+    const fetchWorker = async ({ url, fetchOptions, maxAge = DAY }: FetchWorkerProps) => {
+        let worker = workerRef.current;
+        dispatch({ type: 'loading', loading: true });
         let method = methodType(fetchOptions)
-        let next = method.isGet ? await get(url.toString()).then((value) => {
-            if (!value?.timestamp) { return true }
-            if (!dataExpired(maxAge, value?.timestamp)) {
-                del(url.toString());
-                return true;
-            }
-            console.log('cache hit', url.toString());
-            dispatch({ type: cache ? 'data' : 'pre-load', data: value?.data });
-            return cache ? false : true;
-        }) : true
-
-        if (window && next) {
-            method.isGet && del(url.toString());
-            worker = new FetchWorker();
-            dispatch({ type: 'loading', loading: true });
-            worker.postMessage({ type: 'fetch', url, fetchOptions });
-            worker.addEventListener('message', ({ data: { data, type } }: WorkerResponseType) => {
-                if (!controller?.signal?.aborted) {
-                    if (type === 'success') {
-                        if(method.isDelete || !data) {
-                            return dispatch({type:'loading', loading: false})
-                        }
-                        dispatch({ type: 'data', data })
-                        if (cache && method.isGet) {
-                            let timestamp = Date.now();
-                            let cacheObject = { timestamp, maxAge, data }
-                            set(url.toString(), cacheObject)
-                                .then(() => { console.log("saved data") })
-                                .catch(() => { console.error("couldn't access indexedDB to save data") });
-                        }
+        if (method === 'DELETE') del(url.toString());
+        if (method === 'GET') {
+            get(url.toString())
+                .then((value) => {
+                    if (!value) throw new Error('no value found in db')
+                    if (dataExpired(maxAge, value?.timestamp)) {
+                        del(url.toString())
                     } else {
-                        dispatch({ type: 'error', error: new Error(type) });
+                        dispatch({ type: 'pre-load', data: value?.data });
                     }
-                }
-                cleanupWorker(worker)
-            });
+                })
+                .catch(err => { console.error(err) })
         }
+        worker?.addEventListener('message', ({ data: { type, data } }: WorkerResponseType) => {
+            if (type === 'DELETE') {
+                dispatch({ type: 'loading', loading: false })
+            } else if (type === 'GET') {
+                dispatch({ type: 'data', data })
+                let timestamp = Date.now();
+                let cacheObject = { timestamp, maxAge, data }
+                set(url.toString(), cacheObject)
+                    .then(() => { console.log("saved data") })
+                    .catch(() => { console.error("couldn't access indexedDB to save data") })
+            } else if (type === 'PUT' || type === 'POST') {
+                update(url.toString(), (oldValue) => {
+                    let timestamp = Date.now();
+                    let newData = isObject(data) && isObject(oldValue?.data) ? { ...data, ...oldValue.data } : data;
+                    dispatch({ type: 'data', data: newData })
+                    return { timestamp, maxAge, data: newData }
+                })
+                    .then(() => { console.log("updated data") })
+                    .catch(() => {
+                        dispatch({ type: 'loading', loading: false });
+                        console.error("save to indexedDB failed")
+                    })
+            } else {
+                dispatch({ type: 'error', error: new Error(type) });
+            }
+        });
+        worker?.postMessage({ type: 'fetch', url, fetchOptions });
     }
 
     useEffect(() => {
-        if (!window && !sharedRef?.current?.controller?.signal?.aborted) {
-            dispatch({ type: 'loading', loading: false });
-            dispatch({ type: 'error', error: new Error('window is not defined') });
-            cleanupWorker(worker);
-        }
+        workerRef.current = new FetchWorker()
         return () => {
-            controller?.abort()
-            cleanupWorker(worker);
+            cleanupWorker(workerRef.current);
         }
-    }, [window, sharedRef.current.controller]);
+    }, []);
+
     return { fetchWorker, ...state! };
 };
 
@@ -101,21 +100,4 @@ const initialState: StateType = {
     error: undefined,
     loading: false,
     update: true
-}
-
-function reducer(state: any, action: any) {
-    switch (action.type) {
-        case 'pre-load':
-            return { ...state, data: action.data }
-        case 'data':
-            return { ...state, data: action.data, loading: false, error: void 0 }
-        case 'clearError':
-            return { ...state, error: undefined };
-        case 'error':
-            return { ...state, error: action.error, loading: false }
-        case 'loading':
-            return { ...state, loading: action.loading }
-        default:
-            return state
-    }
 }

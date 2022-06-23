@@ -1,4 +1,11 @@
 
+const methodType = (options) => {
+    if(options && options.method){
+        return options.method.toUpperCase()
+    } else {
+        return 'GET'
+    }
+};
 self.addEventListener('message', (event) => {
     const { type } = event.data;
     let controller = new AbortController();
@@ -19,7 +26,8 @@ self.addEventListener('message', (event) => {
                 return response.json();
             }
         ).then(data => {
-            self.postMessage({type: 'success', data});
+            let method = methodType(options)
+            self.postMessage({type: method, data});
             controller = void 0;
         }).catch(error => {
             self.postMessage({type: error.message || 'Unknown error'});

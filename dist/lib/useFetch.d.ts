@@ -1,10 +1,11 @@
 /**
- *
- * @todo consider how to handle non GET requests
+ * @todo allow multiple queries - data array of json or keyed (by url) single object
+ * @todo handle query strings
+ * @todo work on READ.ME
+ * @todo update fetchWorker to compare data like pollingWorker
  */
 declare type UnknownDataResponseType = Array<unknown> | Record<string, unknown> | undefined;
 export interface FetchWorkerProps {
-    cache?: boolean;
     fetchOptions?: RequestInit | undefined;
     maxAge: number;
     url: RequestInfo | URL;
