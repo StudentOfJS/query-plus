@@ -4,7 +4,7 @@ self.addEventListener('message', (event) => {
     let controller = new AbortController();
     let signal = controller.signal;
     if (type === 'cancel') {
-        controller.signal.abort();
+        controller.abort();
     }
     if (type === 'fetch') {
         const { url, options } = event.data;  

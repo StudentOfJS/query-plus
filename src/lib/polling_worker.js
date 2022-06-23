@@ -57,12 +57,12 @@ self.addEventListener('message', (event) => {
     let controller = new AbortController();
     let signal = controller.signal;
     if (type === 'cancel') {
-        controller.signal.abort();
+        controller.abort();
     }
     if (type === 'poll') {
-        const { url, options, interval, maxAttempts, currentJSON, compareKeys } = event.data;
+        const { url, fetchOptions, interval, maxAttempts, currentJSON, compareKeys } = event.data;
         const validate = (newJson) => !compareJSON(currentJSON, newJson, compareKeys);
-        const getData = fetch(url, options ? {...options, signal} : {signal}).then(
+        const getData = fetch(url, fetchOptions ? {...options, signal} : {signal}).then(
             (response) => {
                 if (!response.ok || response.status === 404) {
                     throw new Error(`HTTP error! Status: ${ response.status }`);

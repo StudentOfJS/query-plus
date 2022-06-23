@@ -1,12 +1,12 @@
 /**
  * @todo polling option
+ * @todo allow multiple queries - data array of json or keyed (by url) single object
  * @todo work on READ.ME
  */
 
 import { useRef, useEffect, useReducer } from "react";
 
 import FetchWorker from './fetch_worker.js?worker&inline'
-import PollingWorker from './polling_worker.js?worker&inline'
 import { useStore } from "./useStore";
 import { cleanupWorker, dataExpired, DAY, methodType } from "./utils";
 
@@ -61,7 +61,7 @@ export function useFetch() {
                         dispatch({ type: 'data', data })
                         if (cache && method.isGet) {
                             let timestamp = Date.now();
-                            let cacheObject = { timestamp, data }
+                            let cacheObject = { timestamp, maxAge, data }
                             set(url.toString(), cacheObject)
                                 .then(() => { console.log("saved data") })
                                 .catch(() => { console.error("couldn't access indexedDB to save data") });
@@ -74,9 +74,6 @@ export function useFetch() {
             });
         }
     }
-    // const pollWorker = async ({url, options, interval, maxAttempts, currentJSON, compareKeys}) => {
-
-    // }
 
     useEffect(() => {
         if (!window && !sharedRef?.current?.controller?.signal?.aborted) {
@@ -85,6 +82,7 @@ export function useFetch() {
             cleanupWorker(worker);
         }
         return () => {
+            controller?.abort()
             cleanupWorker(worker);
         }
     }, [window, sharedRef.current.controller]);
