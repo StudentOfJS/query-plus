@@ -5,7 +5,8 @@
 
 import { useRef, useEffect, useReducer } from "react";
 
-import InlineFetchWorker from './worker.js?worker&inline'
+import FetchWorker from './fetch_worker.js?worker&inline'
+import PollingWorker from './polling_worker.js?worker&inline'
 import { useStore } from "./useStore";
 import { cleanupWorker, dataExpired, DAY, methodType } from "./utils";
 
@@ -32,18 +33,6 @@ export function useFetch() {
     const [state, dispatch] = useReducer(reducer, initialState);
     const sharedRef = useRef<{ worker?: Worker; controller?: AbortController }>({ worker: undefined, controller: new AbortController() });
     let { worker, controller } = sharedRef.current;
-    useEffect(() => {
-        if (!window && !sharedRef?.current?.controller?.signal?.aborted) {
-            dispatch({ type: 'loading', loading: false });
-            dispatch({ type: 'error', error: new Error('window is not defined') });
-            cleanupWorker(worker);
-        }
-        return () => {
-            cleanupWorker(worker);
-        }
-    }, [window, sharedRef.current.controller]);
-
-    
     const fetchWorker = async ({ url, fetchOptions, cache = false, maxAge = DAY }: FetchWorkerProps) => {
         cleanupWorker(worker);
         let method = methodType(fetchOptions)
@@ -60,7 +49,7 @@ export function useFetch() {
 
         if (window && next) {
             method.isGet && del(url.toString());
-            worker = new InlineFetchWorker();
+            worker = new FetchWorker();
             dispatch({ type: 'loading', loading: true });
             worker.postMessage({ type: 'fetch', url, fetchOptions });
             worker.addEventListener('message', ({ data: { data, type } }: WorkerResponseType) => {
@@ -85,6 +74,20 @@ export function useFetch() {
             });
         }
     }
+    // const pollWorker = async ({url, options, interval, maxAttempts, currentJSON, compareKeys}) => {
+
+    // }
+
+    useEffect(() => {
+        if (!window && !sharedRef?.current?.controller?.signal?.aborted) {
+            dispatch({ type: 'loading', loading: false });
+            dispatch({ type: 'error', error: new Error('window is not defined') });
+            cleanupWorker(worker);
+        }
+        return () => {
+            cleanupWorker(worker);
+        }
+    }, [window, sharedRef.current.controller]);
     return { fetchWorker, ...state! };
 };
 
