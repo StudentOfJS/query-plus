@@ -7,9 +7,9 @@
 
 import { useRef, useEffect, useReducer } from "react";
 
-import FetchWorker from './workers/fetch_worker.js?worker&inline'
+import FetchWorker from '../workers/fetch_worker.js?worker&inline'
 import { useStore } from "./useStore";
-import { cleanupWorker, dataExpired, DAY, isObject, methodType, reducer } from "./utils";
+import { cleanupWorker, dataExpired, DAY, isObject, methodType, reducer } from "../utils";
 
 type UnknownDataResponseType = Array<unknown> | Record<string, unknown> | undefined
 type WorkerResponseType = MessageEvent<{
@@ -47,13 +47,11 @@ export function useFetch() {
                         dispatch({ type: 'pre-load', data: value?.data });
                     }
                 })
-                .catch(err => { console.error(err) })
+                .catch(() => { dispatch({ type: 'pre-load', data: undefined }) })
         }
         worker?.addEventListener('message', ({ data: { type, data } }: WorkerResponseType) => {
-            if (type === 'DELETE') {
+            if (type === 'DELETE' || type === 'CACHED') {
                 dispatch({ type: 'loading', loading: false })
-            } else if(type === 'UPDATES') {
-                // do some updating
             } else if (type === 'GET') {
                 dispatch({ type: 'data', data })
                 let timestamp = Date.now();
@@ -77,7 +75,7 @@ export function useFetch() {
                 dispatch({ type: 'error', error: new Error(type) });
             }
         });
-        worker?.postMessage({ type: 'fetch', url, fetchOptions });
+        worker?.postMessage({ type: 'fetch', url, fetchOptions, existingData: state.data });
     }
 
     useEffect(() => {

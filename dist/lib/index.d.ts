@@ -1,2 +1,3 @@
-export { useFetch } from './useFetch';
-export { useStore } from './useStore';
+export { useFetch } from './hooks/useFetch';
+export { useStore } from './hooks/useStore';
+export { usePolling } from './hooks/usePolling';

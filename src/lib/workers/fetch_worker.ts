@@ -1,5 +1,5 @@
 
-import {methodType, isObject, createArrayOfUpdates} from "../utils"
+import {methodType, isObject, isMatch} from "../utils"
 
 self.addEventListener('message', (event) => {
     const { type } = event.data;
@@ -22,14 +22,8 @@ self.addEventListener('message', (event) => {
             }
         ).then(data => {
             let method = methodType(options)
-            if(!existingData) {
-                self.postMessage({type: method, data});
-            } else if(isObject(data)){
-                let updates = createArrayOfUpdates(existingData, data);
-                self.postMessage({type: 'UPDATES', data: updates});
-            } else {
-                self.postMessage({type: method, data});
-            }
+            let hasNotChanged = isMatch(existingData, data)
+            self.postMessage({type: hasNotChanged ? 'CACHED' : method, data: !hasNotChanged && data});
         }).catch(error => {
             self.postMessage({type: error.message || 'Unknown error'});
         })

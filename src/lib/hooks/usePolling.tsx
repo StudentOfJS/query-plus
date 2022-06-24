@@ -5,9 +5,9 @@
 
 import { useRef, useEffect, useReducer } from "react";
 
-import PollingWorker from './workers/polling_worker.js?worker&inline'
+import PollingWorker from '../workers/polling_worker.js?worker&inline'
 import { useStore } from "./useStore";
-import { cleanupWorker, dataExpired, methodType, reducer } from "./utils";
+import { cleanupWorker, dataExpired, methodType, reducer } from "../utils";
 
 
 type UnknownDataResponseType = Array<unknown> | Record<string, unknown> | undefined

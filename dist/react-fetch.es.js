@@ -19,12 +19,12 @@ var __spreadValues = (a, b) => {
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 import { useRef, useEffect, useReducer } from "react";
 import { createStore, clear, del, get, getMany, set, setMany, update } from "idb-keyval";
-const encodedJs = "dmFyIE09T2JqZWN0LmRlZmluZVByb3BlcnR5LFQ9T2JqZWN0LmRlZmluZVByb3BlcnRpZXM7dmFyIG09T2JqZWN0LmdldE93blByb3BlcnR5RGVzY3JpcHRvcnM7dmFyIGc9T2JqZWN0LmdldE93blByb3BlcnR5U3ltYm9sczt2YXIgUz1PYmplY3QucHJvdG90eXBlLmhhc093blByb3BlcnR5LFU9T2JqZWN0LnByb3RvdHlwZS5wcm9wZXJ0eUlzRW51bWVyYWJsZTt2YXIgcD0oZixuLGkpPT5uIGluIGY/TShmLG4se2VudW1lcmFibGU6ITAsY29uZmlndXJhYmxlOiEwLHdyaXRhYmxlOiEwLHZhbHVlOml9KTpmW25dPWksZD0oZixuKT0+e2Zvcih2YXIgaSBpbiBufHwobj17fSkpUy5jYWxsKG4saSkmJnAoZixpLG5baV0pO2lmKGcpZm9yKHZhciBpIG9mIGcobikpVS5jYWxsKG4saSkmJnAoZixpLG5baV0pO3JldHVybiBmfSx3PShmLG4pPT5UKGYsbShuKSk7KGZ1bmN0aW9uKCl7InVzZSBzdHJpY3QiO2NvbnN0IGY9dD0+dHlwZW9mIHQ9PSJvYmplY3QiJiYhQXJyYXkuaXNBcnJheSh0KSYmdCE9PW51bGwsbj0odCxlLHM9e30pPT4oT2JqZWN0LmtleXModCkuZm9yRWFjaChyPT57bGV0IGw9ZT9lKyIuIityOnI7Zih0W3JdKT9uKHRbcl0sbCxzKTpzW2xdPUFycmF5LmlzQXJyYXkodFtyXSk/dFtyXS5zb3J0KCk6dFtyXX0pLE9iamVjdC5lbnRyaWVzKHMpLnNvcnQoKSksaT10PT50LmZsYXRNYXAoZT0+ZihlKT9uKGUpOltlXSkuc29ydCgpLE89dD0+e3ZhciBlLHM7cmV0dXJuKHM9KGU9dD09bnVsbD92b2lkIDA6dC5tZXRob2QpPT1udWxsP3ZvaWQgMDplLnRvVXBwZXJDYXNlKCkpIT1udWxsP3M6IkdFVCJ9LEE9KHQsZSxzKT0+e2xldCByPUFycmF5LmlzQXJyYXkodCk/ImFycmF5Ijp0eXBlb2YgdCxsPUFycmF5LmlzQXJyYXkoZSk/ImFycmF5Ijp0eXBlb2YgZTtyZXR1cm4gciE9PWw/ITE6ciE9PSJvYmplY3QiJiZyIT09ImFycmF5Ij9yPT09bDpzJiZyPT09Im9iamVjdCI/cy5tYXAoYz0+dFtjXT09PWVbY10pLmV2ZXJ5KGM9PmMpOihyPT09ImFycmF5IiYmKHQ9aSh0KSxlPWkoZSkpLCFzJiZyPT09Im9iamVjdCImJih0PW4odCksZT1uKGUpKSxKU09OLnN0cmluZ2lmeSh0KT09PUpTT04uc3RyaW5naWZ5KGUpKX0sRT0odCxlKT0+T2JqZWN0LmVudHJpZXModCkucmVkdWNlKChyLGwpPT57Y29uc3RbYyx5XT1sO2xldCBhPWVbY10sbz10W2NdO2lmKEEoeSxhKSlyZXR1cm4gcjtpZihmKGEpKXtsZXQgaD1PYmplY3Qua2V5cyhhKS5tYXAodT0+QShhW3VdLG9bdV0pP3ZvaWQgMDpbYCR7Y30uJHt1fWAsYVt1XV0pLmZpbHRlcih1PT51KTtyZXR1cm5bLi4uciwuLi5oXX1yZXR1cm4gcn0sW10pO3NlbGYuYWRkRXZlbnRMaXN0ZW5lcigibWVzc2FnZSIsdD0+e2NvbnN0e3R5cGU6ZX09dC5kYXRhO2xldCBzPW5ldyBBYm9ydENvbnRyb2xsZXIscj1zPT1udWxsP3ZvaWQgMDpzLnNpZ25hbDtpZihlPT09ImNhbmNlbCImJihzPT1udWxsfHxzLmFib3J0KCkpLGU9PT0iZmV0Y2giKXtjb25zdHt1cmw6bCxvcHRpb25zOmMsZXhpc3RpbmdEYXRhOnl9PXQuZGF0YTtmZXRjaChsLGM/dyhkKHt9LGMpLHtzaWduYWw6cn0pOntzaWduYWw6cn0pLnRoZW4oYT0+e2lmKCFhLm9rfHxhLnN0YXR1cz09PTQwNCl0aHJvdyBuZXcgRXJyb3IoYEhUVFAgZXJyb3IhIFN0YXR1czogJHthLnN0YXR1c31gKTtpZihhLnN0YXR1cz09PTQwMyl0aHJvdyBuZXcgRXJyb3IoIlVuYXV0aG9yaXplZCEiKTtyZXR1cm4gYS5qc29uKCl9KS50aGVuKGE9PntsZXQgbz1PKGMpO2lmKCF5KXNlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6byxkYXRhOmF9KTtlbHNlIGlmKGYoYSkpe2xldCBoPUUoeSxhKTtzZWxmLnBvc3RNZXNzYWdlKHt0eXBlOiJVUERBVEVTIixkYXRhOmh9KX1lbHNlIHNlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6byxkYXRhOmF9KX0pLmNhdGNoKGE9PntzZWxmLnBvc3RNZXNzYWdlKHt0eXBlOmEubWVzc2FnZXx8IlVua25vd24gZXJyb3IifSl9KX19KX0pKCk7Cg==";
-const blob = typeof window !== "undefined" && window.Blob && new Blob([atob(encodedJs)], { type: "text/javascript;charset=utf-8" });
-function WorkerWrapper() {
-  const objURL = blob && (window.URL || window.webkitURL).createObjectURL(blob);
+const encodedJs$1 = "dmFyIHA9T2JqZWN0LmRlZmluZVByb3BlcnR5LEM9T2JqZWN0LmRlZmluZVByb3BlcnRpZXM7dmFyIFQ9T2JqZWN0LmdldE93blByb3BlcnR5RGVzY3JpcHRvcnM7dmFyIGg9T2JqZWN0LmdldE93blByb3BlcnR5U3ltYm9sczt2YXIgbT1PYmplY3QucHJvdG90eXBlLmhhc093blByb3BlcnR5LE09T2JqZWN0LnByb3RvdHlwZS5wcm9wZXJ0eUlzRW51bWVyYWJsZTt2YXIgbD0oZixhLG4pPT5hIGluIGY/cChmLGEse2VudW1lcmFibGU6ITAsY29uZmlndXJhYmxlOiEwLHdyaXRhYmxlOiEwLHZhbHVlOm59KTpmW2FdPW4sdT0oZixhKT0+e2Zvcih2YXIgbiBpbiBhfHwoYT17fSkpbS5jYWxsKGEsbikmJmwoZixuLGFbbl0pO2lmKGgpZm9yKHZhciBuIG9mIGgoYSkpTS5jYWxsKGEsbikmJmwoZixuLGFbbl0pO3JldHVybiBmfSxBPShmLGEpPT5DKGYsVChhKSk7KGZ1bmN0aW9uKCl7InVzZSBzdHJpY3QiO2NvbnN0IGY9dD0+dHlwZW9mIHQ9PSJvYmplY3QiJiYhQXJyYXkuaXNBcnJheSh0KSYmdCE9PW51bGwsYT0odCxyLHM9e30pPT4oT2JqZWN0LmtleXModCkuZm9yRWFjaChlPT57bGV0IG89cj9yKyIuIitlOmU7Zih0W2VdKT9hKHRbZV0sbyxzKTpzW29dPUFycmF5LmlzQXJyYXkodFtlXSk/dFtlXS5zb3J0KCk6dFtlXX0pLE9iamVjdC5lbnRyaWVzKHMpLnNvcnQoKSksbj10PT50LmZsYXRNYXAocj0+ZihyKT9hKHIpOltyXSkuc29ydCgpLGQ9dD0+e3ZhciByLHM7cmV0dXJuKHM9KHI9dD09bnVsbD92b2lkIDA6dC5tZXRob2QpPT1udWxsP3ZvaWQgMDpyLnRvVXBwZXJDYXNlKCkpIT1udWxsP3M6IkdFVCJ9LGc9KHQscixzKT0+e2xldCBlPUFycmF5LmlzQXJyYXkodCk/ImFycmF5Ijp0eXBlb2YgdCxvPUFycmF5LmlzQXJyYXkocik/ImFycmF5Ijp0eXBlb2YgcjtyZXR1cm4gZSE9PW8/ITE6ZSE9PSJvYmplY3QiJiZlIT09ImFycmF5Ij9lPT09bzpzJiZlPT09Im9iamVjdCI/cy5tYXAoYz0+dFtjXT09PXJbY10pLmV2ZXJ5KGM9PmMpOihlPT09ImFycmF5IiYmKHQ9bih0KSxyPW4ocikpLCFzJiZlPT09Im9iamVjdCImJih0PWEodCkscj1hKHIpKSxKU09OLnN0cmluZ2lmeSh0KT09PUpTT04uc3RyaW5naWZ5KHIpKX07c2VsZi5hZGRFdmVudExpc3RlbmVyKCJtZXNzYWdlIix0PT57Y29uc3R7dHlwZTpyfT10LmRhdGE7bGV0IHM9bmV3IEFib3J0Q29udHJvbGxlcixlPXM9PW51bGw/dm9pZCAwOnMuc2lnbmFsO2lmKHI9PT0iY2FuY2VsIiYmKHM9PW51bGx8fHMuYWJvcnQoKSkscj09PSJmZXRjaCIpe2NvbnN0e3VybDpvLG9wdGlvbnM6YyxleGlzdGluZ0RhdGE6d309dC5kYXRhO2ZldGNoKG8sYz9BKHUoe30sYykse3NpZ25hbDplfSk6e3NpZ25hbDplfSkudGhlbihpPT57aWYoIWkub2t8fGkuc3RhdHVzPT09NDA0KXRocm93IG5ldyBFcnJvcihgSFRUUCBlcnJvciEgU3RhdHVzOiAke2kuc3RhdHVzfWApO2lmKGkuc3RhdHVzPT09NDAzKXRocm93IG5ldyBFcnJvcigiVW5hdXRob3JpemVkISIpO3JldHVybiBpLmpzb24oKX0pLnRoZW4oaT0+e2xldCBFPWQoYykseT1nKHcsaSk7c2VsZi5wb3N0TWVzc2FnZSh7dHlwZTp5PyJDQUNIRUQiOkUsZGF0YToheSYmaX0pfSkuY2F0Y2goaT0+e3NlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6aS5tZXNzYWdlfHwiVW5rbm93biBlcnJvciJ9KX0pfX0pfSkoKTsK";
+const blob$1 = typeof window !== "undefined" && window.Blob && new Blob([atob(encodedJs$1)], { type: "text/javascript;charset=utf-8" });
+function WorkerWrapper$1() {
+  const objURL = blob$1 && (window.URL || window.webkitURL).createObjectURL(blob$1);
   try {
-    return objURL ? new Worker(objURL, {}) : new Worker("data:application/javascript;base64," + encodedJs, { type: "module" });
+    return objURL ? new Worker(objURL, {}) : new Worker("data:application/javascript;base64," + encodedJs$1, { type: "module" });
   } finally {
     objURL && (window.URL || window.webkitURL).revokeObjectURL(objURL);
   }
@@ -97,7 +97,7 @@ function useFetch() {
     set: set2,
     update: update2
   } = useStore();
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialState$1);
   const workerRef = useRef();
   const fetchWorker = async ({
     url,
@@ -124,8 +124,11 @@ function useFetch() {
             data: value == null ? void 0 : value.data
           });
         }
-      }).catch((err) => {
-        console.error(err);
+      }).catch(() => {
+        dispatch({
+          type: "pre-load",
+          data: void 0
+        });
       });
     }
     worker == null ? void 0 : worker.addEventListener("message", ({
@@ -134,14 +137,12 @@ function useFetch() {
         data
       }
     }) => {
-      if (type === "DELETE") {
+      if (type === "DELETE" || type === "CACHED") {
         dispatch({
           type: "loading",
           loading: false
         });
-      } else if (type === "UPDATES")
-        ;
-      else if (type === "GET") {
+      } else if (type === "GET") {
         dispatch({
           type: "data",
           data
@@ -189,11 +190,12 @@ function useFetch() {
     worker == null ? void 0 : worker.postMessage({
       type: "fetch",
       url,
-      fetchOptions
+      fetchOptions,
+      existingData: state.data
     });
   };
   useEffect(() => {
-    workerRef.current = new WorkerWrapper();
+    workerRef.current = new WorkerWrapper$1();
     return () => {
       cleanupWorker(workerRef.current);
     };
@@ -202,10 +204,99 @@ function useFetch() {
     fetchWorker
   }, state);
 }
+const initialState$1 = {
+  data: void 0,
+  error: void 0,
+  loading: false,
+  update: true
+};
+const encodedJs = "dmFyIG09T2JqZWN0LmRlZmluZVByb3BlcnR5LE89T2JqZWN0LmRlZmluZVByb3BlcnRpZXM7dmFyIFM9T2JqZWN0LmdldE93blByb3BlcnR5RGVzY3JpcHRvcnM7dmFyIGQ9T2JqZWN0LmdldE93blByb3BlcnR5U3ltYm9sczt2YXIgdj1PYmplY3QucHJvdG90eXBlLmhhc093blByb3BlcnR5LE09T2JqZWN0LnByb3RvdHlwZS5wcm9wZXJ0eUlzRW51bWVyYWJsZTt2YXIgZz0oaSxhLG4pPT5hIGluIGk/bShpLGEse2VudW1lcmFibGU6ITAsY29uZmlndXJhYmxlOiEwLHdyaXRhYmxlOiEwLHZhbHVlOm59KTppW2FdPW4saD0oaSxhKT0+e2Zvcih2YXIgbiBpbiBhfHwoYT17fSkpdi5jYWxsKGEsbikmJmcoaSxuLGFbbl0pO2lmKGQpZm9yKHZhciBuIG9mIGQoYSkpTS5jYWxsKGEsbikmJmcoaSxuLGFbbl0pO3JldHVybiBpfSxwPShpLGEpPT5PKGksUyhhKSk7KGZ1bmN0aW9uKCl7InVzZSBzdHJpY3QiO2NvbnN0IGk9YXN5bmMoe2ZuOnQsdmFsaWRhdGU6ZSxpbnRlcnZhbDpzLG1heEF0dGVtcHRzOnIsYXR0ZW1wdHM6Yz0wfSk9Pnthc3luYyBmdW5jdGlvbiBmKHUseSl7dHJ5e2NvbnN0IGw9YXdhaXQgdCgpO2lmKGMrKyxlKGwpKXJldHVybiB1KGwpO2lmKHImJmM9PT1yKXJldHVybiB5KG5ldyBFcnJvcigiRXhjZWVkZWQgbWF4IGF0dGVtcHRzIikpO2F3YWl0IHNldFRpbWVvdXQoZixzLHUseSl9Y2F0Y2gobCl7Y29uc29sZS5lcnJvcihgcG9sbGluZyBFcnJvcjogJHsobD09bnVsbD92b2lkIDA6bC5tZXNzYWdlKXx8ImNvbm5lY3Rpb24gZmFpbGVkIn1gKX19cmV0dXJuIG5ldyBQcm9taXNlKGYpfSxhPXQ9PnR5cGVvZiB0PT0ib2JqZWN0IiYmIUFycmF5LmlzQXJyYXkodCkmJnQhPT1udWxsLG49KHQsZSxzPXt9KT0+KE9iamVjdC5rZXlzKHQpLmZvckVhY2gocj0+e2xldCBjPWU/ZSsiLiIrcjpyO2EodFtyXSk/bih0W3JdLGMscyk6c1tjXT1BcnJheS5pc0FycmF5KHRbcl0pP3Rbcl0uc29ydCgpOnRbcl19KSxPYmplY3QuZW50cmllcyhzKS5zb3J0KCkpLEE9dD0+dC5mbGF0TWFwKGU9PmEoZSk/bihlKTpbZV0pLnNvcnQoKSx3PSh0LGUscyk9PntsZXQgcj1BcnJheS5pc0FycmF5KHQpPyJhcnJheSI6dHlwZW9mIHQsYz1BcnJheS5pc0FycmF5KGUpPyJhcnJheSI6dHlwZW9mIGU7cmV0dXJuIHIhPT1jPyExOnIhPT0ib2JqZWN0IiYmciE9PSJhcnJheSI/cj09PWM6cyYmcj09PSJvYmplY3QiP3MubWFwKGY9PnRbZl09PT1lW2ZdKS5ldmVyeShmPT5mKToocj09PSJhcnJheSImJih0PUEodCksZT1BKGUpKSwhcyYmcj09PSJvYmplY3QiJiYodD1uKHQpLGU9bihlKSksSlNPTi5zdHJpbmdpZnkodCk9PT1KU09OLnN0cmluZ2lmeShlKSl9O3NlbGYuYWRkRXZlbnRMaXN0ZW5lcigibWVzc2FnZSIsdD0+e2NvbnN0e3R5cGU6ZX09dC5kYXRhO2xldCBzPW5ldyBBYm9ydENvbnRyb2xsZXIscj1zPT1udWxsP3ZvaWQgMDpzLnNpZ25hbDtpZihlPT09ImNhbmNlbCImJihzPT1udWxsfHxzLmFib3J0KCkpLGU9PT0icG9sbCIpe2NvbnN0e3VybDpjLGZldGNoT3B0aW9uczpmLGludGVydmFsOnUsbWF4QXR0ZW1wdHM6eSxjdXJyZW50SlNPTjpsLGNvbXBhcmVLZXlzOkV9PXQuZGF0YTtpKHtmbjooKT0+ZmV0Y2goYyxmP3AoaCh7fSxmKSx7c2lnbmFsOnJ9KTp7c2lnbmFsOnJ9KS50aGVuKG89PntpZighby5va3x8by5zdGF0dXM9PT00MDQpdGhyb3cgbmV3IEVycm9yKGBIVFRQIGVycm9yISBTdGF0dXM6ICR7by5zdGF0dXN9YCk7aWYoby5zdGF0dXM9PT00MDMpdGhyb3cgbmV3IEVycm9yKCJVbmF1dGhvcml6ZWQhIik7cmV0dXJuIG8uanNvbigpfSksaW50ZXJ2YWw6dSxtYXhBdHRlbXB0czp5LHZhbGlkYXRlOm89PiF3KGwsbyxFKX0pLnRoZW4obz0+e3NlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6InN1Y2Nlc3MiLGRhdGE6b30pLHM9dm9pZCAwfSkuY2F0Y2gobz0+e3NlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6by5tZXNzYWdlfHwiVW5rbm93biBlcnJvciJ9KX0pfX0pfSkoKTsK";
+const blob = typeof window !== "undefined" && window.Blob && new Blob([atob(encodedJs)], { type: "text/javascript;charset=utf-8" });
+function WorkerWrapper() {
+  const objURL = blob && (window.URL || window.webkitURL).createObjectURL(blob);
+  try {
+    return objURL ? new Worker(objURL, {}) : new Worker("data:application/javascript;base64," + encodedJs, { type: "module" });
+  } finally {
+    objURL && (window.URL || window.webkitURL).revokeObjectURL(objURL);
+  }
+}
+function usePolling() {
+  const {
+    del: del2,
+    get: get2,
+    set: set2
+  } = useStore();
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const workerRef = useRef(new WorkerWrapper());
+  let worker = workerRef.current;
+  const pollWorker = async ({
+    url,
+    fetchOptions,
+    interval,
+    maxAttempts,
+    currentJSON,
+    compareKeys
+  }) => {
+    var _a, _b, _c;
+    if (methodType(fetchOptions) !== "GET") {
+      return dispatch({
+        type: "error",
+        error: new Error("method must be GET to poll")
+      });
+    }
+    let currentData = {};
+    try {
+      let value = await get2(url.toString());
+      if (dataExpired((_a = value.maxAge) != null ? _a : 0, (_b = value.timestamp) != null ? _b : 0)) {
+        del2(url.toString()).catch((err) => {
+          console.error(err);
+        });
+      }
+      currentData = (_c = value.data) != null ? _c : {};
+    } catch (err) {
+      console.error(err);
+    }
+    worker.postMessage({
+      type: "poll",
+      url,
+      fetchOptions,
+      interval,
+      maxAttempts,
+      currentJSON,
+      compareKeys
+    });
+    worker.addEventListener("message", ({
+      data: {
+        data,
+        type
+      }
+    }) => {
+    });
+  };
+  useEffect(() => {
+    if (!window) {
+      dispatch({
+        type: "loading",
+        loading: false
+      });
+      dispatch({
+        type: "error",
+        error: new Error("window is not defined")
+      });
+      cleanupWorker(worker);
+    }
+    return () => {
+      cleanupWorker(worker);
+    };
+  }, [window]);
+  return __spreadValues({
+    pollWorker
+  }, state);
+}
 const initialState = {
   data: void 0,
   error: void 0,
   loading: false,
   update: true
 };
-export { useFetch, useStore };
+export { useFetch, usePolling, useStore };
