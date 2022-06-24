@@ -1,5 +1,5 @@
 
-import {methodType} from "./worker_utils"
+import {methodType} from "../utils"
 
 self.addEventListener('message', (event) => {
     const { type } = event.data;

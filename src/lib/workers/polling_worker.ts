@@ -1,4 +1,4 @@
-import {compareJSON, poll} from "./worker_utils"
+import {compareJSON, poll} from "../utils"
 self.addEventListener('message', (event) => {
     const { type } = event.data;
     let controller: AbortController | undefined = new AbortController();

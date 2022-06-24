@@ -7,7 +7,8 @@
     "build": "tsc && vite build",
     "preview": "vite preview",
     "prepack": "json -f package.json -I -e \"delete this.devDependencies; delete this.dependencies\"",
-    "test": "vitest --config ./vitest.config.ts"
+    "test": "vitest --config ./vitest.config.ts",
+    "coverage": "vitest run --coverage"
   },
   "files": [
     "dist"
@@ -27,6 +28,8 @@
   },
   "devDependencies": {
     "@types/node": "^18.0.0",
-    "vite-plugin-dts": "^1.2.0"
+    "happy-dom": "^5.3.1",
+    "vite-plugin-dts": "^1.2.0",
+    "vitest": "^0.15.2"
   }
 }
