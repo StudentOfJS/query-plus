@@ -6,7 +6,7 @@
   React hook for using fetch in a web worker and optional data caching in IndexedDB
 </p>
 <p align="center">
-  <img src="https://repository-images.githubusercontent.com/505699390/51d26170-2c9e-4db3-91fd-8799a6f23651" width="1000" alt="code example">
+  <img src="https://repository-images.githubusercontent.com/505699390/e7071961-16bf-4dc2-b31e-f72eca2940a5" width="1000" alt="code example">
 </p>
 ### Features
 
