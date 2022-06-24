@@ -3,6 +3,7 @@ export interface UseStoreProps {
     storeName: string;
 }
 export declare const useStore: (props?: Partial<UseStoreProps> | undefined) => {
+    __dangerouslyNukeAllStores: () => void;
     del: (key: IDBValidKey) => Promise<void>;
     get: (key: IDBValidKey) => Promise<any>;
     getMany: (keys: Array<IDBValidKey>) => Promise<any[]>;

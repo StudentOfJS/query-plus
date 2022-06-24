@@ -19,7 +19,7 @@ var __spreadValues = (a, b) => {
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 import { useRef, useEffect, useReducer } from "react";
 import { createStore, clear, del, get, getMany, set, setMany, update } from "idb-keyval";
-const encodedJs = "dmFyIGc9T2JqZWN0LmRlZmluZVByb3BlcnR5LGw9T2JqZWN0LmRlZmluZVByb3BlcnRpZXM7dmFyIHc9T2JqZWN0LmdldE93blByb3BlcnR5RGVzY3JpcHRvcnM7dmFyIGY9T2JqZWN0LmdldE93blByb3BlcnR5U3ltYm9sczt2YXIgbT1PYmplY3QucHJvdG90eXBlLmhhc093blByb3BlcnR5LHk9T2JqZWN0LnByb3RvdHlwZS5wcm9wZXJ0eUlzRW51bWVyYWJsZTt2YXIgZD0oYSx0LGUpPT50IGluIGE/ZyhhLHQse2VudW1lcmFibGU6ITAsY29uZmlndXJhYmxlOiEwLHdyaXRhYmxlOiEwLHZhbHVlOmV9KTphW3RdPWUsbz0oYSx0KT0+e2Zvcih2YXIgZSBpbiB0fHwodD17fSkpbS5jYWxsKHQsZSkmJmQoYSxlLHRbZV0pO2lmKGYpZm9yKHZhciBlIG9mIGYodCkpeS5jYWxsKHQsZSkmJmQoYSxlLHRbZV0pO3JldHVybiBhfSx1PShhLHQpPT5sKGEsdyh0KSk7KGZ1bmN0aW9uKCl7InVzZSBzdHJpY3QiO2NvbnN0IGE9dD0+e3ZhciBlLHM7cmV0dXJuKHM9KGU9dD09bnVsbD92b2lkIDA6dC5tZXRob2QpPT1udWxsP3ZvaWQgMDplLnRvVXBwZXJDYXNlKCkpIT1udWxsP3M6IkdFVCJ9O3NlbGYuYWRkRXZlbnRMaXN0ZW5lcigibWVzc2FnZSIsdD0+e2NvbnN0e3R5cGU6ZX09dC5kYXRhO2xldCBzPW5ldyBBYm9ydENvbnRyb2xsZXIsbj1zPT1udWxsP3ZvaWQgMDpzLnNpZ25hbDtpZihlPT09ImNhbmNlbCImJihzPT1udWxsfHxzLmFib3J0KCkpLGU9PT0iZmV0Y2giKXtjb25zdHt1cmw6YyxvcHRpb25zOmh9PXQuZGF0YTtmZXRjaChjLGg/dShvKHt9LGgpLHtzaWduYWw6bn0pOntzaWduYWw6bn0pLnRoZW4ocj0+e2lmKCFyLm9rfHxyLnN0YXR1cz09PTQwNCl0aHJvdyBuZXcgRXJyb3IoYEhUVFAgZXJyb3IhIFN0YXR1czogJHtyLnN0YXR1c31gKTtpZihyLnN0YXR1cz09PTQwMyl0aHJvdyBuZXcgRXJyb3IoIlVuYXV0aG9yaXplZCEiKTtyZXR1cm4gci5qc29uKCl9KS50aGVuKHI9PntsZXQgaT1hKGgpO3NlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6aSxkYXRhOnJ9KSxzPXZvaWQgMH0pLmNhdGNoKHI9PntzZWxmLnBvc3RNZXNzYWdlKHt0eXBlOnIubWVzc2FnZXx8IlVua25vd24gZXJyb3IifSl9KX19KX0pKCk7Cg==";
+const encodedJs = "dmFyIE09T2JqZWN0LmRlZmluZVByb3BlcnR5LFQ9T2JqZWN0LmRlZmluZVByb3BlcnRpZXM7dmFyIG09T2JqZWN0LmdldE93blByb3BlcnR5RGVzY3JpcHRvcnM7dmFyIGc9T2JqZWN0LmdldE93blByb3BlcnR5U3ltYm9sczt2YXIgUz1PYmplY3QucHJvdG90eXBlLmhhc093blByb3BlcnR5LFU9T2JqZWN0LnByb3RvdHlwZS5wcm9wZXJ0eUlzRW51bWVyYWJsZTt2YXIgcD0oZixuLGkpPT5uIGluIGY/TShmLG4se2VudW1lcmFibGU6ITAsY29uZmlndXJhYmxlOiEwLHdyaXRhYmxlOiEwLHZhbHVlOml9KTpmW25dPWksZD0oZixuKT0+e2Zvcih2YXIgaSBpbiBufHwobj17fSkpUy5jYWxsKG4saSkmJnAoZixpLG5baV0pO2lmKGcpZm9yKHZhciBpIG9mIGcobikpVS5jYWxsKG4saSkmJnAoZixpLG5baV0pO3JldHVybiBmfSx3PShmLG4pPT5UKGYsbShuKSk7KGZ1bmN0aW9uKCl7InVzZSBzdHJpY3QiO2NvbnN0IGY9dD0+dHlwZW9mIHQ9PSJvYmplY3QiJiYhQXJyYXkuaXNBcnJheSh0KSYmdCE9PW51bGwsbj0odCxlLHM9e30pPT4oT2JqZWN0LmtleXModCkuZm9yRWFjaChyPT57bGV0IGw9ZT9lKyIuIityOnI7Zih0W3JdKT9uKHRbcl0sbCxzKTpzW2xdPUFycmF5LmlzQXJyYXkodFtyXSk/dFtyXS5zb3J0KCk6dFtyXX0pLE9iamVjdC5lbnRyaWVzKHMpLnNvcnQoKSksaT10PT50LmZsYXRNYXAoZT0+ZihlKT9uKGUpOltlXSkuc29ydCgpLE89dD0+e3ZhciBlLHM7cmV0dXJuKHM9KGU9dD09bnVsbD92b2lkIDA6dC5tZXRob2QpPT1udWxsP3ZvaWQgMDplLnRvVXBwZXJDYXNlKCkpIT1udWxsP3M6IkdFVCJ9LEE9KHQsZSxzKT0+e2xldCByPUFycmF5LmlzQXJyYXkodCk/ImFycmF5Ijp0eXBlb2YgdCxsPUFycmF5LmlzQXJyYXkoZSk/ImFycmF5Ijp0eXBlb2YgZTtyZXR1cm4gciE9PWw/ITE6ciE9PSJvYmplY3QiJiZyIT09ImFycmF5Ij9yPT09bDpzJiZyPT09Im9iamVjdCI/cy5tYXAoYz0+dFtjXT09PWVbY10pLmV2ZXJ5KGM9PmMpOihyPT09ImFycmF5IiYmKHQ9aSh0KSxlPWkoZSkpLCFzJiZyPT09Im9iamVjdCImJih0PW4odCksZT1uKGUpKSxKU09OLnN0cmluZ2lmeSh0KT09PUpTT04uc3RyaW5naWZ5KGUpKX0sRT0odCxlKT0+T2JqZWN0LmVudHJpZXModCkucmVkdWNlKChyLGwpPT57Y29uc3RbYyx5XT1sO2xldCBhPWVbY10sbz10W2NdO2lmKEEoeSxhKSlyZXR1cm4gcjtpZihmKGEpKXtsZXQgaD1PYmplY3Qua2V5cyhhKS5tYXAodT0+QShhW3VdLG9bdV0pP3ZvaWQgMDpbYCR7Y30uJHt1fWAsYVt1XV0pLmZpbHRlcih1PT51KTtyZXR1cm5bLi4uciwuLi5oXX1yZXR1cm4gcn0sW10pO3NlbGYuYWRkRXZlbnRMaXN0ZW5lcigibWVzc2FnZSIsdD0+e2NvbnN0e3R5cGU6ZX09dC5kYXRhO2xldCBzPW5ldyBBYm9ydENvbnRyb2xsZXIscj1zPT1udWxsP3ZvaWQgMDpzLnNpZ25hbDtpZihlPT09ImNhbmNlbCImJihzPT1udWxsfHxzLmFib3J0KCkpLGU9PT0iZmV0Y2giKXtjb25zdHt1cmw6bCxvcHRpb25zOmMsZXhpc3RpbmdEYXRhOnl9PXQuZGF0YTtmZXRjaChsLGM/dyhkKHt9LGMpLHtzaWduYWw6cn0pOntzaWduYWw6cn0pLnRoZW4oYT0+e2lmKCFhLm9rfHxhLnN0YXR1cz09PTQwNCl0aHJvdyBuZXcgRXJyb3IoYEhUVFAgZXJyb3IhIFN0YXR1czogJHthLnN0YXR1c31gKTtpZihhLnN0YXR1cz09PTQwMyl0aHJvdyBuZXcgRXJyb3IoIlVuYXV0aG9yaXplZCEiKTtyZXR1cm4gYS5qc29uKCl9KS50aGVuKGE9PntsZXQgbz1PKGMpO2lmKCF5KXNlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6byxkYXRhOmF9KTtlbHNlIGlmKGYoYSkpe2xldCBoPUUoeSxhKTtzZWxmLnBvc3RNZXNzYWdlKHt0eXBlOiJVUERBVEVTIixkYXRhOmh9KX1lbHNlIHNlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6byxkYXRhOmF9KX0pLmNhdGNoKGE9PntzZWxmLnBvc3RNZXNzYWdlKHt0eXBlOmEubWVzc2FnZXx8IlVua25vd24gZXJyb3IifSl9KX19KX0pKCk7Cg==";
 const blob = typeof window !== "undefined" && window.Blob && new Blob([atob(encodedJs)], { type: "text/javascript;charset=utf-8" });
 function WorkerWrapper() {
   const objURL = blob && (window.URL || window.webkitURL).createObjectURL(blob);
@@ -48,6 +48,9 @@ const useStore = (props) => {
     };
   }, []);
   return {
+    __dangerouslyNukeAllStores: () => {
+      indexedDB.deleteDatabase(DB_NAME);
+    },
     del: (key) => del(key, store.current),
     get: (key) => get(key, store.current),
     getMany: (keys) => getMany(keys, store.current),
@@ -71,16 +74,21 @@ function reducer(state, action) {
   }
 }
 const DAY = 24 * 60 * 60 * 1e3;
-const isObject = (obj) => typeof obj === "object" && !Array.isArray(obj) && obj !== null;
 function cleanupWorker(worker) {
   worker == null ? void 0 : worker.postMessage({ type: "cancel" });
   worker == null ? void 0 : worker.terminate();
   worker = void 0;
 }
-const dataExpired = (maxAge, timestamp = 0) => timestamp + maxAge > Date.now();
+const dataExpired = (maxAge, timestamp) => {
+  if (!timestamp) {
+    return true;
+  }
+  return maxAge + timestamp < Date.now();
+};
+const isObject = (obj) => typeof obj === "object" && !Array.isArray(obj) && obj !== null;
 const methodType = (options) => {
-  var _a;
-  return ((_a = options == null ? void 0 : options.method) == null ? void 0 : _a.toUpperCase()) || "GET";
+  var _a, _b;
+  return (_b = (_a = options == null ? void 0 : options.method) == null ? void 0 : _a.toUpperCase()) != null ? _b : "GET";
 };
 function useFetch() {
   const {
@@ -131,7 +139,9 @@ function useFetch() {
           type: "loading",
           loading: false
         });
-      } else if (type === "GET") {
+      } else if (type === "UPDATES")
+        ;
+      else if (type === "GET") {
         dispatch({
           type: "data",
           data

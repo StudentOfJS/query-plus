@@ -1,8 +1,8 @@
 /**
  * @todo allow multiple queries - data array of json or keyed (by url) single object
  * @todo handle query strings
+ * @todo add to GET method - if existing data, send to worker and update
  * @todo work on READ.ME
- * @todo update fetchWorker to isMatch data like pollingWorker
  */
 declare type UnknownDataResponseType = Array<unknown> | Record<string, unknown> | undefined;
 export interface FetchWorkerProps {
