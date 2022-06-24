@@ -1,4 +1,4 @@
-import {compareJSON, poll} from "../utils"
+import {isMatch, poll} from "../utils"
 self.addEventListener('message', (event) => {
     const { type } = event.data;
     let controller: AbortController | undefined = new AbortController();
@@ -8,7 +8,7 @@ self.addEventListener('message', (event) => {
     }
     if (type === 'poll') {
         const { url, fetchOptions, interval, maxAttempts, currentJSON, compareKeys } = event.data;
-        const validate = (newJson: unknown) => !compareJSON(currentJSON, newJson, compareKeys);
+        const validate = (newJson: unknown) => !isMatch(currentJSON, newJson, compareKeys);
         const getData = () => fetch(url, fetchOptions ? {...fetchOptions, signal} : {signal}).then(
             (response) => {
                 if (!response.ok || response.status === 404) {

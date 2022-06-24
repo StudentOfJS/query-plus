@@ -2,7 +2,7 @@
  * @todo allow multiple queries - data array of json or keyed (by url) single object
  * @todo handle query strings
  * @todo work on READ.ME
- * @todo update fetchWorker to compare data like pollingWorker
+ * @todo update fetchWorker to isMatch data like pollingWorker
  */
 
 import { useRef, useEffect, useReducer } from "react";

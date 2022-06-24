@@ -38,7 +38,10 @@ export const flattenObjectToArray = (
 export const flattenAndSortArray = (arr: Array<any>) =>
   arr.flatMap((x) => isObject(x) ? flattenObjectToArray(x) : [x]).sort();
 
-export const compareJSON = (
+export const methodType = (options: RequestInit | undefined) =>
+  options?.method?.toUpperCase() ?? "GET";
+
+export const isMatch = (
   a: unknown,
   b: unknown,
   compareKeys?: Array<string>,
@@ -68,5 +71,25 @@ export const compareJSON = (
   return JSON.stringify(a) === JSON.stringify(b);
 };
 
-export const methodType = (options: RequestInit | undefined) =>
-  options?.method?.toUpperCase() ?? "GET";
+
+export type StringAnyTuple = [string, any]
+export type ArrayOfStringAnyTuple = Array<StringAnyTuple>
+export type createArrayOfUpdatesType = (oldRecord: Record<string, any>, newRecord: Record<string, any>) => ArrayOfStringAnyTuple
+// compare records two entries deep and return an array of tuples
+export const createArrayOfUpdates:createArrayOfUpdatesType = (oldRecord, newRecord) => {
+  let changeRegister: ArrayOfStringAnyTuple = Object.entries(oldRecord)
+    .reduce((register: any, entry: StringAnyTuple) => {
+      const [key, value] = entry
+      let newValue: Record<string, any> = newRecord[key]
+      let oldValue: Record<string, any> = oldRecord[key]
+      if(isMatch(value, newValue)) return register;
+      if(isObject(newValue)) {
+        let secondLevelKeys = Object.keys(newValue)
+          .map(k => isMatch(newValue[k], oldValue[k]) ? undefined : [`${key}.${k}`, newValue[k]])
+          .filter(tuple => tuple)
+        return [...register, ...secondLevelKeys];
+      }
+      return register
+    }, [])
+  return changeRegister;
+}

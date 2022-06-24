@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import { compareJSON, DAY, dataExpired, methodType, poll, isObject } from "../lib/utils/index"
+import { isMatch, createArrayOfUpdates, DAY, dataExpired, methodType, poll, isObject } from "../lib/utils/index"
 
 test('dataExpired()', () => {
     let twoDaysAGo = Date.now() - DAY * 2
@@ -27,11 +27,11 @@ test('isObject()', () => {
     expect(isObject([test])).toBeFalsy()
 })
 
-test('compareJSON()', () => {
-    expect(compareJSON('test', 'test')).toBe(true)
-    expect(compareJSON('1', 1)).toBe(false)
-    expect(compareJSON({}, [])).toBe(false)
-    expect(compareJSON({
+test('isMatch()', () => {
+    expect(isMatch('test', 'test')).toBe(true)
+    expect(isMatch('1', 1)).toBe(false)
+    expect(isMatch({}, [])).toBe(false)
+    expect(isMatch({
         test: {
             a: {
                 aa: 'winner'
@@ -47,7 +47,7 @@ test('compareJSON()', () => {
         }
     })).toBe(true)
 
-    expect(compareJSON({
+    expect(isMatch({
         test: {
             a: {
                 aa: 'winner'
@@ -62,7 +62,7 @@ test('compareJSON()', () => {
             b: ['a', 'c']
         }
     })).toBe(false)
-    expect(compareJSON({
+    expect(isMatch({
         test: {
             b: ['a', 'b'],
             a: {
@@ -78,7 +78,7 @@ test('compareJSON()', () => {
             b: ['a', 'b']
         }
     })).toBe(true)
-    expect(compareJSON({
+    expect(isMatch({
         test: {
             b: ['b', 'a'],
             a: {
@@ -94,4 +94,44 @@ test('compareJSON()', () => {
             b: ['a', 'b']
         }
     })).toBe(true)
+})
+
+test('createArrayOfUpdates()', () => {
+    let nochange = createArrayOfUpdates({
+        test: {
+            b: ['b', 'a'],
+            a: {
+                aa: 'winner'
+            },
+            
+        }
+    }, {
+        test: {
+            a: {
+                aa: 'winner'
+            },
+            b: ['a', 'b']
+        }
+    })
+    expect(nochange).toStrictEqual([])
+
+    let changeArray = createArrayOfUpdates({
+        test: {
+            b: ['b', 'a'],
+            a: {
+                aa: 'the best'
+            },
+            
+        }
+    }, {
+        test: {
+            a: {
+                aa: 'winner'
+            },
+            b: ['a', 'b']
+        }
+    })
+    let change = JSON.stringify(changeArray)
+    let testChange = JSON.stringify([ [ 'test.a', { aa: 'winner' } ] ])
+    expect(change).toMatch(testChange)
 })
