@@ -1,17 +1,12 @@
 
-const methodType = (options) => {
-    if(options && options.method){
-        return options.method.toUpperCase()
-    } else {
-        return 'GET'
-    }
-};
+import {methodType} from "./worker_utils"
+
 self.addEventListener('message', (event) => {
     const { type } = event.data;
-    let controller = new AbortController();
-    let signal = controller.signal;
+    let controller: AbortController | undefined = new AbortController();
+    let signal = controller?.signal;
     if (type === 'cancel') {
-        controller.abort();
+        controller?.abort();
     }
     if (type === 'fetch') {
         const { url, options } = event.data;  
