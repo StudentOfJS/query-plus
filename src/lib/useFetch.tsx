@@ -1,8 +1,8 @@
 /**
  * @todo allow multiple queries - data array of json or keyed (by url) single object
  * @todo handle query strings
+ * @todo add to GET method - if existing data, send to worker and update
  * @todo work on READ.ME
- * @todo update fetchWorker to isMatch data like pollingWorker
  */
 
 import { useRef, useEffect, useReducer } from "react";
@@ -52,6 +52,8 @@ export function useFetch() {
         worker?.addEventListener('message', ({ data: { type, data } }: WorkerResponseType) => {
             if (type === 'DELETE') {
                 dispatch({ type: 'loading', loading: false })
+            } else if(type === 'UPDATES') {
+                // do some updating
             } else if (type === 'GET') {
                 dispatch({ type: 'data', data })
                 let timestamp = Date.now();

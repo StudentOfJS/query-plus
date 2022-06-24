@@ -25,7 +25,8 @@ export const useStore = (props?:Partial<UseStoreProps>) => {
             store.current = void 0
         }
     }, []);
-    return { 
+    return {
+        __dangerouslyNukeAllStores: () => { indexedDB.deleteDatabase(DB_NAME) },
         del: (key: IDBValidKey) => del(key, store.current),
         get: (key: IDBValidKey) => get(key, store.current),
         getMany: (keys: Array<IDBValidKey>) => getMany(keys, store.current),
