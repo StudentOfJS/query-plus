@@ -13,7 +13,7 @@ useFetch is the react hook that we provide to make using Query+ a breeze.
 
         const  {  fetchWorker,  data,  error,  loading  }  =  useFetch()
         useEffect(()  =>  {
-        fetchWorker({  url:  'https://swapi.dev/api/people/3/'  })
+            fetchWorker({  url:  'https://swapi.dev/api/people/3/'  })
         },  []);
 > **ProTip:** You can use multiple **useFetch()** per component. Although you may be better off with a new component.
 
