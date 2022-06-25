@@ -14,13 +14,13 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/react-fetch.umd.js",
-  "module": "./dist/react-fetch.es.js",
+  "main": "./dist/query-plus.umd.js",
+  "module": "./dist/query-plus.es.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/react-fetch.es.js",
-      "require": "./dist/react-fetch.umd.js"
+      "import": "./dist/query-plus.es.js",
+      "require": "./dist/query-plus.umd.js"
     }
   },
   "dependencies": {
