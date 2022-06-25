@@ -1,7 +1,5 @@
 /**
- * @todo allow multiple queries - data array of json or keyed (by url) single object
- * @todo handle query strings
- * @todo add to GET method - if existing data, send to worker and update
+ * @todo handle query strings?
  * @todo work on READ.ME
  */
 
@@ -9,9 +7,9 @@ import { useRef, useEffect, useReducer } from "react";
 
 import FetchWorker from '../workers/fetch_worker.js?worker&inline'
 import { useStore } from "./useStore";
-import { cleanupWorker, dataExpired, DAY, isObject, methodType, reducer } from "../utils";
+import { cleanupWorker, dataExpired, DAY, initialState, isObject, methodType, reducer, serializeFunction, UnknownDataResponseType } from "../utils";
 
-type UnknownDataResponseType = Array<unknown> | Record<string, unknown> | undefined
+
 type WorkerResponseType = MessageEvent<{
     type: string;
     data?: UnknownDataResponseType
@@ -19,20 +17,26 @@ type WorkerResponseType = MessageEvent<{
 
 export interface FetchWorkerProps {
     fetchOptions?: RequestInit | undefined
-    maxAge: number
-    // middleware?: (data: UnknownDataResponseType) => UnknownDataResponseType
+    maxAge?: number
+    middleware?: (data: UnknownDataResponseType) => UnknownDataResponseType
     url: RequestInfo | URL
 }
 /**
  * useFetch is a React hook that can be initialized with no params.
  * @example const { data, error, loading, fetchWorker } = useFetch()
+ * fetchWorker({
+ *  url: 'https://swapi.dev/api/people/1/',
+ *  middleware: (d:Record<string, any>) => { let keys = Object.keys(d); return {[keys[0]]: d[keys[0]], [keys[1]]: d[keys[1]]}}
+ * });
+ * 
  * 
  */
 export function useFetch() {
     const { del, get, set, update } = useStore()
     const [state, dispatch] = useReducer(reducer, initialState);
     const workerRef = useRef<Worker>();
-    const fetchWorker = async ({ url, fetchOptions, maxAge = DAY }: FetchWorkerProps) => {
+
+    const fetchWorker = async ({ url, fetchOptions, maxAge = DAY, middleware }: FetchWorkerProps) => {
         let worker = workerRef.current;
         dispatch({ type: 'loading', loading: true });
         let method = methodType(fetchOptions)
@@ -62,7 +66,7 @@ export function useFetch() {
             } else if (type === 'PUT' || type === 'POST') {
                 update(url.toString(), (oldValue) => {
                     let timestamp = Date.now();
-                    let newData = isObject(data) && isObject(oldValue?.data) ? { ...data, ...oldValue.data } : data;
+                    let newData = isObject(data) && isObject(oldValue?.data) ? { ...oldValue.data, ...data } : data;
                     dispatch({ type: 'data', data: newData })
                     return { timestamp, maxAge, data: newData }
                 })
@@ -75,7 +79,8 @@ export function useFetch() {
                 dispatch({ type: 'error', error: new Error(type) });
             }
         });
-        worker?.postMessage({ type: 'fetch', url, fetchOptions, existingData: state.data });
+        let serializedMw = middleware ? serializeFunction(middleware) : undefined
+        worker?.postMessage({ type: 'fetch', url, fetchOptions, existingData: state.data, middleware: serializedMw });
     }
 
     useEffect(() => {
@@ -88,16 +93,3 @@ export function useFetch() {
     return { fetchWorker, ...state! };
 };
 
-export interface StateType {
-    data: UnknownDataResponseType;
-    error?: Error;
-    loading: boolean;
-    update: boolean;
-}
-
-const initialState: StateType = {
-    data: undefined,
-    error: undefined,
-    loading: false,
-    update: true
-}

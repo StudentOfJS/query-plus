@@ -1,8 +1,8 @@
 /**
- * @example const { del, get, set, update } = useStore()
- * @todo consider creating a new store per request and adding all fields as key value pairs
- * create stores base key value pair 
- * @todo consider upgrading to idb
+ * 
+ * @param {persistData?: boolean, storeName?: string} props
+ * @example const { del, get, set, update } = useStore({ persistData: true, storeName: 'myStore' })
+ * 
 */
 import { useEffect, useRef } from "react";
 import { clear, del, get, getMany, set, setMany, update, createStore } from 'idb-keyval';

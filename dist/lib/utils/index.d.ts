@@ -12,3 +12,5 @@ export declare type StringAnyTuple = [string, any];
 export declare type ArrayOfStringAnyTuple = Array<StringAnyTuple>;
 export declare type createArrayOfUpdatesType = (oldRecord: Record<string, any>, newRecord: Record<string, any>) => ArrayOfStringAnyTuple;
 export declare const createArrayOfUpdates: createArrayOfUpdatesType;
+export declare const serializeFunction: (f: Function) => string;
+export declare const deserializeFunction: (s: string) => any;

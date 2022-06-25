@@ -26,7 +26,25 @@ export interface PollingWorkerProps {
  * pollWorker
  *
  */
-export declare function usePolling(): any;
+export declare function usePolling(): {
+    data: any;
+    error?: Error | undefined;
+    loading: boolean;
+    update: boolean;
+    pollWorker: ({ url, fetchOptions, interval, maxAttempts, currentJSON, compareKeys }: PollingWorkerProps) => Promise<void>;
+} | {
+    error: any;
+    loading: boolean;
+    data: import("../utils").UnknownDataResponseType;
+    update: boolean;
+    pollWorker: ({ url, fetchOptions, interval, maxAttempts, currentJSON, compareKeys }: PollingWorkerProps) => Promise<void>;
+} | {
+    loading: any;
+    data: import("../utils").UnknownDataResponseType;
+    error?: Error | undefined;
+    update: boolean;
+    pollWorker: ({ url, fetchOptions, interval, maxAttempts, currentJSON, compareKeys }: PollingWorkerProps) => Promise<void>;
+};
 export interface StateType {
     data: UnknownDataResponseType;
     error?: Error;

@@ -1,5 +1,5 @@
 
-import {methodType, isObject, isMatch} from "../utils"
+import {deserializeFunction, methodType, isMatch} from "../utils"
 
 self.addEventListener('message', (event) => {
     const { type } = event.data;
@@ -9,7 +9,7 @@ self.addEventListener('message', (event) => {
         controller?.abort();
     }
     if (type === 'fetch') {
-        const { url, options, existingData } = event.data;  
+        const { url, options, existingData, middleware } = event.data; 
         fetch(url, options ? {...options, signal} : {signal}).then(
             (response) => {
                 if (!response.ok || response.status === 404) {
@@ -21,6 +21,10 @@ self.addEventListener('message', (event) => {
                 return response.json();
             }
         ).then(data => {
+            if(middleware) {
+                let fn = deserializeFunction(middleware)
+                data = fn(data)
+            }
             let method = methodType(options)
             let hasNotChanged = isMatch(existingData, data)
             self.postMessage({type: hasNotChanged ? 'CACHED' : method, data: !hasNotChanged && data});

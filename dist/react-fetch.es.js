@@ -19,7 +19,7 @@ var __spreadValues = (a, b) => {
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
 import { useRef, useEffect, useReducer } from "react";
 import { createStore, clear, del, get, getMany, set, setMany, update } from "idb-keyval";
-const encodedJs$1 = "dmFyIHA9T2JqZWN0LmRlZmluZVByb3BlcnR5LEM9T2JqZWN0LmRlZmluZVByb3BlcnRpZXM7dmFyIFQ9T2JqZWN0LmdldE93blByb3BlcnR5RGVzY3JpcHRvcnM7dmFyIGg9T2JqZWN0LmdldE93blByb3BlcnR5U3ltYm9sczt2YXIgbT1PYmplY3QucHJvdG90eXBlLmhhc093blByb3BlcnR5LE09T2JqZWN0LnByb3RvdHlwZS5wcm9wZXJ0eUlzRW51bWVyYWJsZTt2YXIgbD0oZixhLG4pPT5hIGluIGY/cChmLGEse2VudW1lcmFibGU6ITAsY29uZmlndXJhYmxlOiEwLHdyaXRhYmxlOiEwLHZhbHVlOm59KTpmW2FdPW4sdT0oZixhKT0+e2Zvcih2YXIgbiBpbiBhfHwoYT17fSkpbS5jYWxsKGEsbikmJmwoZixuLGFbbl0pO2lmKGgpZm9yKHZhciBuIG9mIGgoYSkpTS5jYWxsKGEsbikmJmwoZixuLGFbbl0pO3JldHVybiBmfSxBPShmLGEpPT5DKGYsVChhKSk7KGZ1bmN0aW9uKCl7InVzZSBzdHJpY3QiO2NvbnN0IGY9dD0+dHlwZW9mIHQ9PSJvYmplY3QiJiYhQXJyYXkuaXNBcnJheSh0KSYmdCE9PW51bGwsYT0odCxyLHM9e30pPT4oT2JqZWN0LmtleXModCkuZm9yRWFjaChlPT57bGV0IG89cj9yKyIuIitlOmU7Zih0W2VdKT9hKHRbZV0sbyxzKTpzW29dPUFycmF5LmlzQXJyYXkodFtlXSk/dFtlXS5zb3J0KCk6dFtlXX0pLE9iamVjdC5lbnRyaWVzKHMpLnNvcnQoKSksbj10PT50LmZsYXRNYXAocj0+ZihyKT9hKHIpOltyXSkuc29ydCgpLGQ9dD0+e3ZhciByLHM7cmV0dXJuKHM9KHI9dD09bnVsbD92b2lkIDA6dC5tZXRob2QpPT1udWxsP3ZvaWQgMDpyLnRvVXBwZXJDYXNlKCkpIT1udWxsP3M6IkdFVCJ9LGc9KHQscixzKT0+e2xldCBlPUFycmF5LmlzQXJyYXkodCk/ImFycmF5Ijp0eXBlb2YgdCxvPUFycmF5LmlzQXJyYXkocik/ImFycmF5Ijp0eXBlb2YgcjtyZXR1cm4gZSE9PW8/ITE6ZSE9PSJvYmplY3QiJiZlIT09ImFycmF5Ij9lPT09bzpzJiZlPT09Im9iamVjdCI/cy5tYXAoYz0+dFtjXT09PXJbY10pLmV2ZXJ5KGM9PmMpOihlPT09ImFycmF5IiYmKHQ9bih0KSxyPW4ocikpLCFzJiZlPT09Im9iamVjdCImJih0PWEodCkscj1hKHIpKSxKU09OLnN0cmluZ2lmeSh0KT09PUpTT04uc3RyaW5naWZ5KHIpKX07c2VsZi5hZGRFdmVudExpc3RlbmVyKCJtZXNzYWdlIix0PT57Y29uc3R7dHlwZTpyfT10LmRhdGE7bGV0IHM9bmV3IEFib3J0Q29udHJvbGxlcixlPXM9PW51bGw/dm9pZCAwOnMuc2lnbmFsO2lmKHI9PT0iY2FuY2VsIiYmKHM9PW51bGx8fHMuYWJvcnQoKSkscj09PSJmZXRjaCIpe2NvbnN0e3VybDpvLG9wdGlvbnM6YyxleGlzdGluZ0RhdGE6d309dC5kYXRhO2ZldGNoKG8sYz9BKHUoe30sYykse3NpZ25hbDplfSk6e3NpZ25hbDplfSkudGhlbihpPT57aWYoIWkub2t8fGkuc3RhdHVzPT09NDA0KXRocm93IG5ldyBFcnJvcihgSFRUUCBlcnJvciEgU3RhdHVzOiAke2kuc3RhdHVzfWApO2lmKGkuc3RhdHVzPT09NDAzKXRocm93IG5ldyBFcnJvcigiVW5hdXRob3JpemVkISIpO3JldHVybiBpLmpzb24oKX0pLnRoZW4oaT0+e2xldCBFPWQoYykseT1nKHcsaSk7c2VsZi5wb3N0TWVzc2FnZSh7dHlwZTp5PyJDQUNIRUQiOkUsZGF0YToheSYmaX0pfSkuY2F0Y2goaT0+e3NlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6aS5tZXNzYWdlfHwiVW5rbm93biBlcnJvciJ9KX0pfX0pfSkoKTsK";
+const encodedJs$1 = "dmFyIEM9T2JqZWN0LmRlZmluZVByb3BlcnR5LFQ9T2JqZWN0LmRlZmluZVByb3BlcnRpZXM7dmFyIE09T2JqZWN0LmdldE93blByb3BlcnR5RGVzY3JpcHRvcnM7dmFyIHk9T2JqZWN0LmdldE93blByb3BlcnR5U3ltYm9sczt2YXIgTz1PYmplY3QucHJvdG90eXBlLmhhc093blByb3BlcnR5LFM9T2JqZWN0LnByb3RvdHlwZS5wcm9wZXJ0eUlzRW51bWVyYWJsZTt2YXIgaD0oaSxzLGEpPT5zIGluIGk/QyhpLHMse2VudW1lcmFibGU6ITAsY29uZmlndXJhYmxlOiEwLHdyaXRhYmxlOiEwLHZhbHVlOmF9KTppW3NdPWEsQT0oaSxzKT0+e2Zvcih2YXIgYSBpbiBzfHwocz17fSkpTy5jYWxsKHMsYSkmJmgoaSxhLHNbYV0pO2lmKHkpZm9yKHZhciBhIG9mIHkocykpUy5jYWxsKHMsYSkmJmgoaSxhLHNbYV0pO3JldHVybiBpfSxkPShpLHMpPT5UKGksTShzKSk7KGZ1bmN0aW9uKCl7InVzZSBzdHJpY3QiO2NvbnN0IGk9dD0+dHlwZW9mIHQ9PSJvYmplY3QiJiYhQXJyYXkuaXNBcnJheSh0KSYmdCE9PW51bGwscz0odCxyLG49e30pPT4oT2JqZWN0LmtleXModCkuZm9yRWFjaChlPT57bGV0IG89cj9yKyIuIitlOmU7aSh0W2VdKT9zKHRbZV0sbyxuKTpuW29dPUFycmF5LmlzQXJyYXkodFtlXSk/dFtlXS5zb3J0KCk6dFtlXX0pLE9iamVjdC5lbnRyaWVzKG4pLnNvcnQoKSksYT10PT50LmZsYXRNYXAocj0+aShyKT9zKHIpOltyXSkuc29ydCgpLGc9dD0+e3ZhciByLG47cmV0dXJuKG49KHI9dD09bnVsbD92b2lkIDA6dC5tZXRob2QpPT1udWxsP3ZvaWQgMDpyLnRvVXBwZXJDYXNlKCkpIT1udWxsP246IkdFVCJ9LHc9KHQscixuKT0+e2xldCBlPUFycmF5LmlzQXJyYXkodCk/ImFycmF5Ijp0eXBlb2YgdCxvPUFycmF5LmlzQXJyYXkocik/ImFycmF5Ijp0eXBlb2YgcjtyZXR1cm4gZSE9PW8/ITE6ZSE9PSJvYmplY3QiJiZlIT09ImFycmF5Ij9lPT09bzpuJiZlPT09Im9iamVjdCI/bi5tYXAoYz0+dFtjXT09PXJbY10pLmV2ZXJ5KGM9PmMpOihlPT09ImFycmF5IiYmKHQ9YSh0KSxyPWEocikpLCFuJiZlPT09Im9iamVjdCImJih0PXModCkscj1zKHIpKSxKU09OLnN0cmluZ2lmeSh0KT09PUpTT04uc3RyaW5naWZ5KHIpKX0sRT10PT5uZXcgRnVuY3Rpb24oYHJldHVybiAke2RlY29kZVVSSSh0KX1gKSgpO3NlbGYuYWRkRXZlbnRMaXN0ZW5lcigibWVzc2FnZSIsdD0+e2NvbnN0e3R5cGU6cn09dC5kYXRhO2xldCBuPW5ldyBBYm9ydENvbnRyb2xsZXIsZT1uPT1udWxsP3ZvaWQgMDpuLnNpZ25hbDtpZihyPT09ImNhbmNlbCImJihuPT1udWxsfHxuLmFib3J0KCkpLHI9PT0iZmV0Y2giKXtjb25zdHt1cmw6byxvcHRpb25zOmMsZXhpc3RpbmdEYXRhOm0sbWlkZGxld2FyZTpsfT10LmRhdGE7ZmV0Y2gobyxjP2QoQSh7fSxjKSx7c2lnbmFsOmV9KTp7c2lnbmFsOmV9KS50aGVuKGY9PntpZighZi5va3x8Zi5zdGF0dXM9PT00MDQpdGhyb3cgbmV3IEVycm9yKGBIVFRQIGVycm9yISBTdGF0dXM6ICR7Zi5zdGF0dXN9YCk7aWYoZi5zdGF0dXM9PT00MDMpdGhyb3cgbmV3IEVycm9yKCJVbmF1dGhvcml6ZWQhIik7cmV0dXJuIGYuanNvbigpfSkudGhlbihmPT57bCYmKGY9RShsKShmKSk7bGV0IHA9ZyhjKSx1PXcobSxmKTtzZWxmLnBvc3RNZXNzYWdlKHt0eXBlOnU/IkNBQ0hFRCI6cCxkYXRhOiF1JiZmfSl9KS5jYXRjaChmPT57c2VsZi5wb3N0TWVzc2FnZSh7dHlwZTpmLm1lc3NhZ2V8fCJVbmtub3duIGVycm9yIn0pfSl9fSl9KSgpOwo=";
 const blob$1 = typeof window !== "undefined" && window.Blob && new Blob([atob(encodedJs$1)], { type: "text/javascript;charset=utf-8" });
 function WorkerWrapper$1() {
   const objURL = blob$1 && (window.URL || window.webkitURL).createObjectURL(blob$1);
@@ -59,6 +59,12 @@ const useStore = (props) => {
     update: (key, updater) => update(key, updater, store.current)
   };
 };
+const initialState$1 = {
+  data: void 0,
+  error: void 0,
+  loading: false,
+  update: true
+};
 function reducer(state, action) {
   switch (action.type) {
     case "pre-load":
@@ -90,6 +96,7 @@ const methodType = (options) => {
   var _a, _b;
   return (_b = (_a = options == null ? void 0 : options.method) == null ? void 0 : _a.toUpperCase()) != null ? _b : "GET";
 };
+const serializeFunction = (f) => encodeURI(f.toString());
 function useFetch() {
   const {
     del: del2,
@@ -102,7 +109,8 @@ function useFetch() {
   const fetchWorker = async ({
     url,
     fetchOptions,
-    maxAge = DAY
+    maxAge = DAY,
+    middleware
   }) => {
     let worker = workerRef.current;
     dispatch({
@@ -161,7 +169,7 @@ function useFetch() {
       } else if (type === "PUT" || type === "POST") {
         update2(url.toString(), (oldValue) => {
           let timestamp = Date.now();
-          let newData = isObject(data) && isObject(oldValue == null ? void 0 : oldValue.data) ? __spreadValues(__spreadValues({}, data), oldValue.data) : data;
+          let newData = isObject(data) && isObject(oldValue == null ? void 0 : oldValue.data) ? __spreadValues(__spreadValues({}, oldValue.data), data) : data;
           dispatch({
             type: "data",
             data: newData
@@ -187,11 +195,13 @@ function useFetch() {
         });
       }
     });
+    let serializedMw = middleware ? serializeFunction(middleware) : void 0;
     worker == null ? void 0 : worker.postMessage({
       type: "fetch",
       url,
       fetchOptions,
-      existingData: state.data
+      existingData: state.data,
+      middleware: serializedMw
     });
   };
   useEffect(() => {
@@ -204,12 +214,6 @@ function useFetch() {
     fetchWorker
   }, state);
 }
-const initialState$1 = {
-  data: void 0,
-  error: void 0,
-  loading: false,
-  update: true
-};
 const encodedJs = "dmFyIG09T2JqZWN0LmRlZmluZVByb3BlcnR5LE89T2JqZWN0LmRlZmluZVByb3BlcnRpZXM7dmFyIFM9T2JqZWN0LmdldE93blByb3BlcnR5RGVzY3JpcHRvcnM7dmFyIGQ9T2JqZWN0LmdldE93blByb3BlcnR5U3ltYm9sczt2YXIgdj1PYmplY3QucHJvdG90eXBlLmhhc093blByb3BlcnR5LE09T2JqZWN0LnByb3RvdHlwZS5wcm9wZXJ0eUlzRW51bWVyYWJsZTt2YXIgZz0oaSxhLG4pPT5hIGluIGk/bShpLGEse2VudW1lcmFibGU6ITAsY29uZmlndXJhYmxlOiEwLHdyaXRhYmxlOiEwLHZhbHVlOm59KTppW2FdPW4saD0oaSxhKT0+e2Zvcih2YXIgbiBpbiBhfHwoYT17fSkpdi5jYWxsKGEsbikmJmcoaSxuLGFbbl0pO2lmKGQpZm9yKHZhciBuIG9mIGQoYSkpTS5jYWxsKGEsbikmJmcoaSxuLGFbbl0pO3JldHVybiBpfSxwPShpLGEpPT5PKGksUyhhKSk7KGZ1bmN0aW9uKCl7InVzZSBzdHJpY3QiO2NvbnN0IGk9YXN5bmMoe2ZuOnQsdmFsaWRhdGU6ZSxpbnRlcnZhbDpzLG1heEF0dGVtcHRzOnIsYXR0ZW1wdHM6Yz0wfSk9Pnthc3luYyBmdW5jdGlvbiBmKHUseSl7dHJ5e2NvbnN0IGw9YXdhaXQgdCgpO2lmKGMrKyxlKGwpKXJldHVybiB1KGwpO2lmKHImJmM9PT1yKXJldHVybiB5KG5ldyBFcnJvcigiRXhjZWVkZWQgbWF4IGF0dGVtcHRzIikpO2F3YWl0IHNldFRpbWVvdXQoZixzLHUseSl9Y2F0Y2gobCl7Y29uc29sZS5lcnJvcihgcG9sbGluZyBFcnJvcjogJHsobD09bnVsbD92b2lkIDA6bC5tZXNzYWdlKXx8ImNvbm5lY3Rpb24gZmFpbGVkIn1gKX19cmV0dXJuIG5ldyBQcm9taXNlKGYpfSxhPXQ9PnR5cGVvZiB0PT0ib2JqZWN0IiYmIUFycmF5LmlzQXJyYXkodCkmJnQhPT1udWxsLG49KHQsZSxzPXt9KT0+KE9iamVjdC5rZXlzKHQpLmZvckVhY2gocj0+e2xldCBjPWU/ZSsiLiIrcjpyO2EodFtyXSk/bih0W3JdLGMscyk6c1tjXT1BcnJheS5pc0FycmF5KHRbcl0pP3Rbcl0uc29ydCgpOnRbcl19KSxPYmplY3QuZW50cmllcyhzKS5zb3J0KCkpLEE9dD0+dC5mbGF0TWFwKGU9PmEoZSk/bihlKTpbZV0pLnNvcnQoKSx3PSh0LGUscyk9PntsZXQgcj1BcnJheS5pc0FycmF5KHQpPyJhcnJheSI6dHlwZW9mIHQsYz1BcnJheS5pc0FycmF5KGUpPyJhcnJheSI6dHlwZW9mIGU7cmV0dXJuIHIhPT1jPyExOnIhPT0ib2JqZWN0IiYmciE9PSJhcnJheSI/cj09PWM6cyYmcj09PSJvYmplY3QiP3MubWFwKGY9PnRbZl09PT1lW2ZdKS5ldmVyeShmPT5mKToocj09PSJhcnJheSImJih0PUEodCksZT1BKGUpKSwhcyYmcj09PSJvYmplY3QiJiYodD1uKHQpLGU9bihlKSksSlNPTi5zdHJpbmdpZnkodCk9PT1KU09OLnN0cmluZ2lmeShlKSl9O3NlbGYuYWRkRXZlbnRMaXN0ZW5lcigibWVzc2FnZSIsdD0+e2NvbnN0e3R5cGU6ZX09dC5kYXRhO2xldCBzPW5ldyBBYm9ydENvbnRyb2xsZXIscj1zPT1udWxsP3ZvaWQgMDpzLnNpZ25hbDtpZihlPT09ImNhbmNlbCImJihzPT1udWxsfHxzLmFib3J0KCkpLGU9PT0icG9sbCIpe2NvbnN0e3VybDpjLGZldGNoT3B0aW9uczpmLGludGVydmFsOnUsbWF4QXR0ZW1wdHM6eSxjdXJyZW50SlNPTjpsLGNvbXBhcmVLZXlzOkV9PXQuZGF0YTtpKHtmbjooKT0+ZmV0Y2goYyxmP3AoaCh7fSxmKSx7c2lnbmFsOnJ9KTp7c2lnbmFsOnJ9KS50aGVuKG89PntpZighby5va3x8by5zdGF0dXM9PT00MDQpdGhyb3cgbmV3IEVycm9yKGBIVFRQIGVycm9yISBTdGF0dXM6ICR7by5zdGF0dXN9YCk7aWYoby5zdGF0dXM9PT00MDMpdGhyb3cgbmV3IEVycm9yKCJVbmF1dGhvcml6ZWQhIik7cmV0dXJuIG8uanNvbigpfSksaW50ZXJ2YWw6dSxtYXhBdHRlbXB0czp5LHZhbGlkYXRlOm89PiF3KGwsbyxFKX0pLnRoZW4obz0+e3NlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6InN1Y2Nlc3MiLGRhdGE6b30pLHM9dm9pZCAwfSkuY2F0Y2gobz0+e3NlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6by5tZXNzYWdlfHwiVW5rbm93biBlcnJvciJ9KX0pfX0pfSkoKTsK";
 const blob = typeof window !== "undefined" && window.Blob && new Blob([atob(encodedJs)], { type: "text/javascript;charset=utf-8" });
 function WorkerWrapper() {

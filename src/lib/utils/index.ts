@@ -93,3 +93,6 @@ export const createArrayOfUpdates:createArrayOfUpdatesType = (oldRecord, newReco
     }, [])
   return changeRegister;
 }
+
+export const serializeFunction = (f: Function) => encodeURI(f.toString());
+export const deserializeFunction = (s: string) => new Function(`return ${decodeURI(s)}`)();

@@ -1,4 +1,19 @@
-export function reducer(state: any, action: any) {
+export type UnknownDataResponseType = Array<unknown> | Record<string, unknown> | undefined
+export interface StateType {
+    data: UnknownDataResponseType;
+    error?: Error;
+    loading: boolean;
+    update: boolean;
+}
+
+export const initialState: StateType = {
+    data: undefined,
+    error: undefined,
+    loading: false,
+    update: true
+}
+
+export function reducer(state: StateType, action: any) {
     switch (action.type) {
         case 'pre-load':
             return { ...state, data: action.data }
