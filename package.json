@@ -1,5 +1,6 @@
 {
   "name": "react-fetch",
+  "description": "Fetch data from a remote API with React",
   "private": true,
   "version": "0.0.0",
   "license": "MIT",
@@ -30,6 +31,7 @@
   "devDependencies": {
     "@types/node": "^18.0.0",
     "happy-dom": "^5.3.1",
+    "json": "^11.0.0",
     "vite-plugin-dts": "^1.2.0",
     "vitest": "^0.15.2"
   }
