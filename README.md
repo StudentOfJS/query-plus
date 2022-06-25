@@ -1,4 +1,4 @@
-# Query+!
+# Query+
 
 Sometimes APIs are slow, sometimes you need to process the data before you consume it and occasionly you want to store the response for reuese later. These factors all have an impact on the performance and percieved performance of your site. Waiting for a slow api, stuck on a loading screen, this is a familiar and unpleasant problem that we all encounter at some point. How about that filter and map transform you run on the data? This will add to the time your users are waiting behind a spinner. Do you have an api that usually returns the same JSON each time it's called? Seems inefficient and bad reason to keep your users waiting
 **Query+** tackles these issues by storing your api responses in a persistent database and only updating them when the new response differs from the stored data. This comparison and if you choose the middlware function you pass in for processing the response, runs in a **web worker** freeing the main thread for clientside interactions or whatever you want to prioritise. It means that your data is available immediatly, yet you aren't going to miss any updates. 
