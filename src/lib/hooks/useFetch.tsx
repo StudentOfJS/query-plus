@@ -1,7 +1,7 @@
 import { useRef, useEffect, useReducer } from "react";
 
 import FetchWorker from '../workers/fetch_worker.js?worker&inline'
-import { cleanupWorker, DAY, initialState, isObject, reducer, serializeFunction, UnknownDataResponseType } from "../utils";
+import { cleanupWorker, DAY, initialState, reducer, serializeFunction, UnknownDataResponseType } from "../utils";
 
 
 type WorkerResponseType = MessageEvent<{
@@ -10,7 +10,7 @@ type WorkerResponseType = MessageEvent<{
 }>
 
 export interface FetchWorkerProps {
-    fetchOptions?: RequestInit | undefined
+    options?: RequestInit | undefined
     maxAge?: number
     middleware?: (data: UnknownDataResponseType) => UnknownDataResponseType
     url: RequestInfo | URL
@@ -25,6 +25,14 @@ export interface FetchWorkerProps {
         options?: RequestInit | undefined
     }
 }
+export interface PollWorkerProps {
+    url: RequestInfo | URL
+    interval: number,
+    options?: RequestInit | undefined
+    maxAttempts?: number,
+    existingData?: number, 
+    compareKeys?: string[]
+}
 /**
  * useFetch is a React hook that can be initialized with no params.
  * @example const { data, error, loading, fetchWorker } = useFetch()
@@ -38,8 +46,8 @@ export interface FetchWorkerProps {
 export function useFetch() {
     const [state, dispatch] = useReducer(reducer, initialState);
     const workerRef = useRef<Worker>();
-
-    const fetchWorker = async ({ url, fetchOptions, maxAge = DAY, middleware }: FetchWorkerProps) => {
+    
+    const fetchWorker = async ({ url, options, maxAge = DAY, middleware }: FetchWorkerProps) => {
         let worker = workerRef.current;
         dispatch({ type: 'loading', loading: true });
 
@@ -61,7 +69,17 @@ export function useFetch() {
             }
         });
         let serializedMw = middleware ? serializeFunction(middleware) : undefined
-        worker?.postMessage({ type: 'fetch', url, fetchOptions, existingData: state.data, middleware: serializedMw, maxAge });
+        worker?.postMessage({ type: 'fetch', url, options, existingData: state.data, middleware: serializedMw, maxAge });
+    }
+    const pollWorker = async ({ url, interval = 5000, options, maxAttempts = 100, compareKeys }: PollWorkerProps) => {
+        let worker = workerRef.current;
+        dispatch({ type: 'loading', loading: true })
+        worker?.addEventListener('message', ({ data: { type, data } }: WorkerResponseType) => {
+            if(type === 'COMPLETE') dispatch({ type: 'loading', loading: false });
+            else if(type === 'DATA') dispatch({ type: 'data', data });
+            else dispatch({ type: 'error', error: new Error(type) });
+        })
+        worker?.postMessage({ type: 'poll', url, interval, maxAttempts, options, existingData: state.data, compareKeys });
     }
 
     useEffect(() => {
@@ -71,6 +89,6 @@ export function useFetch() {
         }
     }, []);
 
-    return { fetchWorker, ...state! };
+    return { fetchWorker, pollWorker, ...state! };
 };
 
