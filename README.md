@@ -28,4 +28,4 @@ useStore is a react hooks wrapper around [Jake Archibald's](https://github.com/j
 
 # Inspiration
 
-Jake and Surma's [shows on youtube](https://www.youtube.com/c/GoogleChromeDevelopers) have been a massive inspiration for me, without them I would likely have never found out about web workers or indexedDB. They have made web development more exciting and expanded my understanding.
+Jake and Surma's [shows on youtube](https://www.youtube.com/c/GoogleChromeDevelopers) have been a massive inspiration for me, without them I would likely have never found out about web workers or indexedDB.

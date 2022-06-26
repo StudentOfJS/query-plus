@@ -1,8 +1,3 @@
-/**
- * @todo handle query strings?
- * @todo work on READ.ME
- */
-
 import { useRef, useEffect, useReducer } from "react";
 
 import FetchWorker from '../workers/fetch_worker.js?worker&inline'

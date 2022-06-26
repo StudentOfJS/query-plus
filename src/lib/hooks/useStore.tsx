@@ -1,9 +1,3 @@
-/**
- * 
- * @param {persistData?: boolean, storeName?: string} props
- * @example const { del, get, set, update } = useStore({ persistData: true, storeName: 'myStore' })
- * 
-*/
 import { useEffect, useRef } from "react";
 import { clear, del, get, getMany, set, setMany, update, createStore } from 'idb-keyval';
 import type { UseStore } from 'idb-keyval'
@@ -14,6 +8,12 @@ export interface UseStoreProps {
 }
 const DB_NAME = 'usestore-db'
 const DB_STORE = 'usestore-db'
+/**
+ * 
+ * @param {persistData?: boolean, storeName?: string} props
+ * @example const { del, get, set, update } = useStore({ persistData: true, storeName: 'myStore' })
+ * 
+*/
 export const useStore = (props?:Partial<UseStoreProps>) => {
     const {persistData, storeName} = {persistData: true, storeName: DB_STORE, ...props!}
     const store = useRef<UseStore>()
