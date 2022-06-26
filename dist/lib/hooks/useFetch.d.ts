@@ -1,7 +1,3 @@
-/**
- * @todo handle query strings?
- * @todo work on READ.ME
- */
 import { UnknownDataResponseType } from "../utils";
 export interface FetchWorkerProps {
     fetchOptions?: RequestInit | undefined;

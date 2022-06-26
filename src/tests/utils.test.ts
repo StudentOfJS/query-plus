@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import { isMatch, createArrayOfUpdates, DAY, dataExpired, methodType, poll, isObject } from "../lib/utils/index"
+import { isMatch, createArrayOfUpdates, DAY, dataExpired, methodType, isObject } from "../lib/utils/index"
 
 test('dataExpired()', () => {
     let twoDaysAGo = Date.now() - DAY * 2

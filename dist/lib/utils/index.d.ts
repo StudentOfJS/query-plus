@@ -1,5 +1,4 @@
 export * from "./state_tools";
-export * from "./poll";
 export declare const DAY: number;
 export declare function cleanupWorker(worker: Worker | undefined): void;
 export declare const dataExpired: (maxAge: number, timestamp?: number | undefined) => boolean;
