@@ -1,7 +1,7 @@
 {
   "name": "query-plus",
   "description": "Fetch data from a remote API with React",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "license": "MIT",
   "scripts": {
     "dev": "vite",
