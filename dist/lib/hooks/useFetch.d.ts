@@ -4,6 +4,10 @@ export interface FetchWorkerProps {
     maxAge?: number;
     middleware?: (data: UnknownDataResponseType) => UnknownDataResponseType;
     url: RequestInfo | URL;
+    update?: {
+        url: RequestInfo | URL;
+        options?: RequestInit | undefined;
+    };
 }
 /**
  * useFetch is a React hook that can be initialized with no params.
@@ -17,13 +21,15 @@ export interface FetchWorkerProps {
  */
 export declare function useFetch(): {
     data: any;
-    error?: Error | undefined;
     loading: boolean;
+    preload: boolean;
+    error: undefined;
     update: boolean;
     fetchWorker: ({ url, fetchOptions, maxAge, middleware }: FetchWorkerProps) => Promise<void>;
 } | {
     error: any;
     loading: boolean;
+    preload: boolean;
     data: UnknownDataResponseType;
     update: boolean;
     fetchWorker: ({ url, fetchOptions, maxAge, middleware }: FetchWorkerProps) => Promise<void>;
@@ -31,6 +37,7 @@ export declare function useFetch(): {
     loading: any;
     data: UnknownDataResponseType;
     error?: Error | undefined;
+    preload: boolean;
     update: boolean;
     fetchWorker: ({ url, fetchOptions, maxAge, middleware }: FetchWorkerProps) => Promise<void>;
 };

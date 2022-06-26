@@ -17,9 +17,8 @@ var __spreadValues = (a, b) => {
   return a;
 };
 var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
-import { useRef, useEffect, useReducer } from "react";
-import { del, get, getMany, set, setMany, update, createStore, clear } from "idb-keyval";
-const encodedJs = "dmFyIEM9T2JqZWN0LmRlZmluZVByb3BlcnR5LFQ9T2JqZWN0LmRlZmluZVByb3BlcnRpZXM7dmFyIE09T2JqZWN0LmdldE93blByb3BlcnR5RGVzY3JpcHRvcnM7dmFyIHk9T2JqZWN0LmdldE93blByb3BlcnR5U3ltYm9sczt2YXIgTz1PYmplY3QucHJvdG90eXBlLmhhc093blByb3BlcnR5LFM9T2JqZWN0LnByb3RvdHlwZS5wcm9wZXJ0eUlzRW51bWVyYWJsZTt2YXIgaD0oaSxzLGEpPT5zIGluIGk/QyhpLHMse2VudW1lcmFibGU6ITAsY29uZmlndXJhYmxlOiEwLHdyaXRhYmxlOiEwLHZhbHVlOmF9KTppW3NdPWEsQT0oaSxzKT0+e2Zvcih2YXIgYSBpbiBzfHwocz17fSkpTy5jYWxsKHMsYSkmJmgoaSxhLHNbYV0pO2lmKHkpZm9yKHZhciBhIG9mIHkocykpUy5jYWxsKHMsYSkmJmgoaSxhLHNbYV0pO3JldHVybiBpfSxkPShpLHMpPT5UKGksTShzKSk7KGZ1bmN0aW9uKCl7InVzZSBzdHJpY3QiO2NvbnN0IGk9dD0+dHlwZW9mIHQ9PSJvYmplY3QiJiYhQXJyYXkuaXNBcnJheSh0KSYmdCE9PW51bGwscz0odCxyLG49e30pPT4oT2JqZWN0LmtleXModCkuZm9yRWFjaChlPT57bGV0IG89cj9yKyIuIitlOmU7aSh0W2VdKT9zKHRbZV0sbyxuKTpuW29dPUFycmF5LmlzQXJyYXkodFtlXSk/dFtlXS5zb3J0KCk6dFtlXX0pLE9iamVjdC5lbnRyaWVzKG4pLnNvcnQoKSksYT10PT50LmZsYXRNYXAocj0+aShyKT9zKHIpOltyXSkuc29ydCgpLGc9dD0+e3ZhciByLG47cmV0dXJuKG49KHI9dD09bnVsbD92b2lkIDA6dC5tZXRob2QpPT1udWxsP3ZvaWQgMDpyLnRvVXBwZXJDYXNlKCkpIT1udWxsP246IkdFVCJ9LHc9KHQscixuKT0+e2xldCBlPUFycmF5LmlzQXJyYXkodCk/ImFycmF5Ijp0eXBlb2YgdCxvPUFycmF5LmlzQXJyYXkocik/ImFycmF5Ijp0eXBlb2YgcjtyZXR1cm4gZSE9PW8/ITE6ZSE9PSJvYmplY3QiJiZlIT09ImFycmF5Ij9lPT09bzpuJiZlPT09Im9iamVjdCI/bi5tYXAoYz0+dFtjXT09PXJbY10pLmV2ZXJ5KGM9PmMpOihlPT09ImFycmF5IiYmKHQ9YSh0KSxyPWEocikpLCFuJiZlPT09Im9iamVjdCImJih0PXModCkscj1zKHIpKSxKU09OLnN0cmluZ2lmeSh0KT09PUpTT04uc3RyaW5naWZ5KHIpKX0sRT10PT5uZXcgRnVuY3Rpb24oYHJldHVybiAke2RlY29kZVVSSSh0KX1gKSgpO3NlbGYuYWRkRXZlbnRMaXN0ZW5lcigibWVzc2FnZSIsdD0+e2NvbnN0e3R5cGU6cn09dC5kYXRhO2xldCBuPW5ldyBBYm9ydENvbnRyb2xsZXIsZT1uPT1udWxsP3ZvaWQgMDpuLnNpZ25hbDtpZihyPT09ImNhbmNlbCImJihuPT1udWxsfHxuLmFib3J0KCkpLHI9PT0iZmV0Y2giKXtjb25zdHt1cmw6byxvcHRpb25zOmMsZXhpc3RpbmdEYXRhOm0sbWlkZGxld2FyZTpsfT10LmRhdGE7ZmV0Y2gobyxjP2QoQSh7fSxjKSx7c2lnbmFsOmV9KTp7c2lnbmFsOmV9KS50aGVuKGY9PntpZighZi5va3x8Zi5zdGF0dXM9PT00MDQpdGhyb3cgbmV3IEVycm9yKGBIVFRQIGVycm9yISBTdGF0dXM6ICR7Zi5zdGF0dXN9YCk7aWYoZi5zdGF0dXM9PT00MDMpdGhyb3cgbmV3IEVycm9yKCJVbmF1dGhvcml6ZWQhIik7cmV0dXJuIGYuanNvbigpfSkudGhlbihmPT57bCYmKGY9RShsKShmKSk7bGV0IHA9ZyhjKSx1PXcobSxmKTtzZWxmLnBvc3RNZXNzYWdlKHt0eXBlOnU/IkNBQ0hFRCI6cCxkYXRhOiF1JiZmfSl9KS5jYXRjaChmPT57c2VsZi5wb3N0TWVzc2FnZSh7dHlwZTpmLm1lc3NhZ2V8fCJVbmtub3duIGVycm9yIn0pfSl9fSl9KSgpOwo=";
+import { useReducer, useRef, useEffect } from "react";
+const encodedJs = "dmFyIGI9T2JqZWN0LmRlZmluZVByb3BlcnR5LEk9T2JqZWN0LmRlZmluZVByb3BlcnRpZXM7dmFyIFE9T2JqZWN0LmdldE93blByb3BlcnR5RGVzY3JpcHRvcnM7dmFyIEw9T2JqZWN0LmdldE93blByb3BlcnR5U3ltYm9sczt2YXIgVz1PYmplY3QucHJvdG90eXBlLmhhc093blByb3BlcnR5LFg9T2JqZWN0LnByb3RvdHlwZS5wcm9wZXJ0eUlzRW51bWVyYWJsZTt2YXIgUj0oYSxjLGkpPT5jIGluIGE/YihhLGMse2VudW1lcmFibGU6ITAsY29uZmlndXJhYmxlOiEwLHdyaXRhYmxlOiEwLHZhbHVlOml9KTphW2NdPWksZz0oYSxjKT0+e2Zvcih2YXIgaSBpbiBjfHwoYz17fSkpVy5jYWxsKGMsaSkmJlIoYSxpLGNbaV0pO2lmKEwpZm9yKHZhciBpIG9mIEwoYykpWC5jYWxsKGMsaSkmJlIoYSxpLGNbaV0pO3JldHVybiBhfSxtPShhLGMpPT5JKGEsUShjKSk7KGZ1bmN0aW9uKCl7InVzZSBzdHJpY3QiO2Z1bmN0aW9uIGEodCl7cmV0dXJuIG5ldyBQcm9taXNlKChlLG4pPT57dC5vbmNvbXBsZXRlPXQub25zdWNjZXNzPSgpPT5lKHQucmVzdWx0KSx0Lm9uYWJvcnQ9dC5vbmVycm9yPSgpPT5uKHQuZXJyb3IpfSl9ZnVuY3Rpb24gYyh0LGUpe2NvbnN0IG49aW5kZXhlZERCLm9wZW4odCk7bi5vbnVwZ3JhZGVuZWVkZWQ9KCk9Pm4ucmVzdWx0LmNyZWF0ZU9iamVjdFN0b3JlKGUpO2NvbnN0IHI9YShuKTtyZXR1cm4oZixvKT0+ci50aGVuKGQ9Pm8oZC50cmFuc2FjdGlvbihlLGYpLm9iamVjdFN0b3JlKGUpKSl9bGV0IGk7ZnVuY3Rpb24geSgpe3JldHVybiBpfHwoaT1jKCJrZXl2YWwtc3RvcmUiLCJrZXl2YWwiKSksaX1mdW5jdGlvbiBVKHQsZT15KCkpe3JldHVybiBlKCJyZWFkb25seSIsbj0+YShuLmdldCh0KSkpfWZ1bmN0aW9uIF8odCxlLG49eSgpKXtyZXR1cm4gbigicmVhZHdyaXRlIixyPT4oci5wdXQoZSx0KSxhKHIudHJhbnNhY3Rpb24pKSl9ZnVuY3Rpb24gRyh0LGUsbj15KCkpe3JldHVybiBuKCJyZWFkd3JpdGUiLHI9Pm5ldyBQcm9taXNlKChmLG8pPT57ci5nZXQodCkub25zdWNjZXNzPWZ1bmN0aW9uKCl7dHJ5e3IucHV0KGUodGhpcy5yZXN1bHQpLHQpLGYoYShyLnRyYW5zYWN0aW9uKSl9Y2F0Y2goZCl7byhkKX19fSkpfWZ1bmN0aW9uIEYodCxlPXkoKSl7cmV0dXJuIGUoInJlYWR3cml0ZSIsbj0+KG4uZGVsZXRlKHQpLGEobi50cmFuc2FjdGlvbikpKX1jb25zdCBqPSh0LGUpPT5lP3QrZTxEYXRlLm5vdygpOiEwLEU9dD0+dHlwZW9mIHQ9PSJvYmplY3QiJiYhQXJyYXkuaXNBcnJheSh0KSYmdCE9PW51bGwsbD0odCxlLG49e30pPT4oT2JqZWN0LmtleXModCkuZm9yRWFjaChyPT57bGV0IGY9ZT9lKyIuIityOnI7RSh0W3JdKT9sKHRbcl0sZixuKTpuW2ZdPUFycmF5LmlzQXJyYXkodFtyXSk/dFtyXS5zb3J0KCk6dFtyXX0pLE9iamVjdC5lbnRyaWVzKG4pLnNvcnQoKSksVD10PT50LmZsYXRNYXAoZT0+RShlKT9sKGUpOltlXSkuc29ydCgpLHo9dD0+e3ZhciBlLG47cmV0dXJuKG49KGU9dD09bnVsbD92b2lkIDA6dC5tZXRob2QpPT1udWxsP3ZvaWQgMDplLnRvVXBwZXJDYXNlKCkpIT1udWxsP246IkdFVCJ9LE09KHQsZSxuKT0+e2xldCByPUFycmF5LmlzQXJyYXkodCk/ImFycmF5Ijp0eXBlb2YgdCxmPUFycmF5LmlzQXJyYXkoZSk/ImFycmF5Ijp0eXBlb2YgZTtyZXR1cm4gciE9PWY/ITE6ciE9PSJvYmplY3QiJiZyIT09ImFycmF5Ij9yPT09ZjpuJiZyPT09Im9iamVjdCI/bi5tYXAobz0+dFtvXT09PWVbb10pLmV2ZXJ5KG89Pm8pOihyPT09ImFycmF5IiYmKHQ9VCh0KSxlPVQoZSkpLCFuJiZyPT09Im9iamVjdCImJih0PWwodCksZT1sKGUpKSxKU09OLnN0cmluZ2lmeSh0KT09PUpTT04uc3RyaW5naWZ5KGUpKX0sSD10PT5uZXcgRnVuY3Rpb24oYHJldHVybiAke2RlY29kZVVSSSh0KX1gKSgpLHc9YygidXNlc3RvcmUtZGIiLCJ1c2VzdG9yZS1kYiIpLE89dD0+Rih0LHcpLEo9dD0+VSh0LHcpLE49KHQsZSk9Pl8odCxlLHcpLCQ9KHQsZSk9PkcodCxlLHcpLEE9dD0+e2lmKCF0Lm9rfHx0LnN0YXR1cz09PTQwNCl0aHJvdyBuZXcgRXJyb3IoYEhUVFAgZXJyb3IhIFN0YXR1czogJHt0LnN0YXR1c31gKTtpZih0LnN0YXR1cz09PTQwMyl0aHJvdyBuZXcgRXJyb3IoIlVuYXV0aG9yaXplZCEiKTtyZXR1cm4gdC5qc29uKCl9LEQ9dD0+e3NlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6dC5tZXNzYWdlfHwiVW5rbm93biBlcnJvciJ9KX07c2VsZi5hZGRFdmVudExpc3RlbmVyKCJtZXNzYWdlIix0PT57Y29uc3R7dHlwZTplfT10LmRhdGE7bGV0IG49bmV3IEFib3J0Q29udHJvbGxlcixyPW49PW51bGw/dm9pZCAwOm4uc2lnbmFsO2lmKGU9PT0iY2FuY2VsIiYmKG49PW51bGx8fG4uYWJvcnQoKSksZT09PSJmZXRjaCIpe2xldHtleGlzdGluZ0RhdGE6Zix1cmw6byxvcHRpb25zOmQsbWF4QWdlOkMsbWlkZGxld2FyZTpQLHVwZGF0ZTpwfT10LmRhdGE7Y29uc3QgUz1zPT57UCYmKHM9SChQKShzKSksKCFmfHwhTShmLHMpKSYmKHNlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6IkRBVEEiLGRhdGE6c30pLE4oby50b1N0cmluZygpLHtkYXRhOnMsdGltZXN0YW1wOkRhdGUubm93KCksbWF4QWdlOkN9KS50aGVuKCgpPT57Y29uc29sZS5pbmZvKCJzYXZlZCBkYXRhIil9KS5jYXRjaCgoKT0+e2NvbnNvbGUuaW5mbygiY291bGRuJ3QgYWNjZXNzIGluZGV4ZWREQiB0byBzYXZlIGRhdGEiKX0pKSxzZWxmLnBvc3RNZXNzYWdlKHt0eXBlOiJDT01QTEVURSJ9KX07bGV0IHU9eihkKTt1PT09IkRFTEVURSImJihPKG8udG9TdHJpbmcoKSksZmV0Y2gobyxkKS50aGVuKCgpPT57cD9mZXRjaChwLnVybCxwLm9wdGlvbnMpLnRoZW4oQSkudGhlbihTKS5jYXRjaChzPT57dGhyb3cgc30pOnNlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6IkNPTVBMRVRFIn0pfSkuY2F0Y2goRCkpLHU9PT0iR0VUIiYmKEooby50b1N0cmluZygpKS50aGVuKHM9PntpZighcyl0aHJvdyBuZXcgRXJyb3IoIm5vIHZhbHVlIGZvdW5kIGluIGRiIik7aWYoaihzPT1udWxsP3ZvaWQgMDpzLm1heEFnZSxzPT1udWxsP3ZvaWQgMDpzLnRpbWVzdGFtcCkpdGhyb3cgTyhvLnRvU3RyaW5nKCkpLG5ldyBFcnJvcigiZGF0YSBleHBpcmVkIik7c2VsZi5wb3N0TWVzc2FnZShNKGYscz09bnVsbD92b2lkIDA6cy5kYXRhKT97dHlwZToiQ0FDSEVEIn06e3R5cGU6IlBSRV9MT0FEIixkYXRhOnM9PW51bGw/dm9pZCAwOnMuZGF0YX0pfSkuY2F0Y2gocz0+e2NvbnNvbGUuaW5mbyhzPT1udWxsP3ZvaWQgMDpzLm1lc3NhZ2UpfSksZmV0Y2gobyxkP20oZyh7fSxkKSx7c2lnbmFsOnJ9KTp7c2lnbmFsOnJ9KS50aGVuKEEpLnRoZW4oUykuY2F0Y2goRCkpLCh1PT09IlBVVCJ8fHU9PT0iUE9TVCIpJiZmZXRjaChvLGQ/bShnKHt9LGQpLHtzaWduYWw6cn0pOntzaWduYWw6cn0pLnRoZW4oQSkudGhlbihzPT57cD9mZXRjaChwLnVybCxwLm9wdGlvbnMpLnRoZW4oQSkudGhlbihTKS5jYXRjaChoPT57dGhyb3cgaH0pOiQoby50b1N0cmluZygpLGg9PntsZXQgQj1EYXRlLm5vdygpLHg9RShzKSYmRShoPT1udWxsP3ZvaWQgMDpoLmRhdGEpP2coZyh7fSxoLmRhdGEpLHMpOnM7cmV0dXJuIHNlbGYucG9zdE1lc3NhZ2Uoe3R5cGU6dSxkYXRhOnh9KSx7dGltZXN0YW1wOkIsbWF4QWdlOkMsZGF0YTp4fX0pLmNhdGNoKCgpPT57Y29uc29sZS5pbmZvKCJ1cGRhdGUgc3RvcmUgZmFpbGVkIil9KS5maW5hbGx5KCgpPT57c2VsZi5wb3N0TWVzc2FnZSh7dHlwZToiQ09NUExFVEUifSl9KX0pLmNhdGNoKEQpfX0pfSkoKTsK";
 const blob = typeof window !== "undefined" && window.Blob && new Blob([atob(encodedJs)], { type: "text/javascript;charset=utf-8" });
 function WorkerWrapper() {
   const objURL = blob && (window.URL || window.webkitURL).createObjectURL(blob);
@@ -29,50 +28,21 @@ function WorkerWrapper() {
     objURL && (window.URL || window.webkitURL).revokeObjectURL(objURL);
   }
 }
-const DB_NAME = "usestore-db";
-const DB_STORE = "usestore-db";
-const useStore = (props) => {
-  const {
-    persistData,
-    storeName
-  } = __spreadValues({
-    persistData: true,
-    storeName: DB_STORE
-  }, props);
-  const store = useRef();
-  useEffect(() => {
-    store.current = createStore(DB_NAME, storeName);
-    return () => {
-      !persistData && clear(store.current);
-      store.current = void 0;
-    };
-  }, []);
-  return {
-    __dangerouslyNukeAllStores: () => {
-      indexedDB.deleteDatabase(DB_NAME);
-    },
-    del: (key) => del(key, store.current),
-    get: (key) => get(key, store.current),
-    getMany: (keys) => getMany(keys, store.current),
-    set: (key, value) => set(key, value, store.current),
-    setMany: (entries) => setMany(entries, store.current),
-    update: (key, updater) => update(key, updater, store.current)
-  };
-};
 const initialState = {
   data: void 0,
   error: void 0,
   loading: false,
+  preload: false,
   update: true
 };
 function reducer(state, action) {
   switch (action.type) {
     case "pre-load":
-      return __spreadProps(__spreadValues({}, state), { data: action.data });
+      return __spreadProps(__spreadValues({}, state), { data: action.data, loading: false, preload: true, error: void 0 });
     case "data":
-      return __spreadProps(__spreadValues({}, state), { data: action.data, loading: false, error: void 0 });
+      return __spreadProps(__spreadValues({}, state), { data: action.data, loading: false, preload: false, error: void 0 });
     case "error":
-      return __spreadProps(__spreadValues({}, state), { error: action.error, loading: false });
+      return __spreadProps(__spreadValues({}, state), { error: action.error, loading: false, preload: false });
     case "loading":
       return __spreadProps(__spreadValues({}, state), { loading: action.loading });
     default:
@@ -85,25 +55,8 @@ function cleanupWorker(worker) {
   worker == null ? void 0 : worker.terminate();
   worker = void 0;
 }
-const dataExpired = (maxAge, timestamp) => {
-  if (!timestamp) {
-    return true;
-  }
-  return maxAge + timestamp < Date.now();
-};
-const isObject = (obj) => typeof obj === "object" && !Array.isArray(obj) && obj !== null;
-const methodType = (options) => {
-  var _a, _b;
-  return (_b = (_a = options == null ? void 0 : options.method) == null ? void 0 : _a.toUpperCase()) != null ? _b : "GET";
-};
 const serializeFunction = (f) => encodeURI(f.toString());
 function useFetch() {
-  const {
-    del: del2,
-    get: get2,
-    set: set2,
-    update: update2
-  } = useStore();
   const [state, dispatch] = useReducer(reducer, initialState);
   const workerRef = useRef();
   const fetchWorker = async ({
@@ -117,82 +70,38 @@ function useFetch() {
       type: "loading",
       loading: true
     });
-    let method = methodType(fetchOptions);
-    if (method === "DELETE")
-      del2(url.toString());
-    if (method === "GET") {
-      get2(url.toString()).then((value) => {
-        if (!value)
-          throw new Error("no value found in db");
-        if (dataExpired(maxAge, value == null ? void 0 : value.timestamp)) {
-          del2(url.toString());
-        } else {
-          dispatch({
-            type: "pre-load",
-            data: value == null ? void 0 : value.data
-          });
-        }
-      }).catch(() => {
-        dispatch({
-          type: "pre-load",
-          data: void 0
-        });
-      });
-    }
     worker == null ? void 0 : worker.addEventListener("message", ({
       data: {
         type,
         data
       }
     }) => {
-      if (type === "DELETE" || type === "CACHED") {
-        dispatch({
-          type: "loading",
-          loading: false
-        });
-      } else if (type === "GET") {
-        dispatch({
-          type: "data",
-          data
-        });
-        let timestamp = Date.now();
-        let cacheObject = {
-          timestamp,
-          maxAge,
-          data
-        };
-        set2(url.toString(), cacheObject).then(() => {
-          console.log("saved data");
-        }).catch(() => {
-          console.error("couldn't access indexedDB to save data");
-        });
-      } else if (type === "PUT" || type === "POST") {
-        update2(url.toString(), (oldValue) => {
-          let timestamp = Date.now();
-          let newData = isObject(data) && isObject(oldValue == null ? void 0 : oldValue.data) ? __spreadValues(__spreadValues({}, oldValue.data), data) : data;
-          dispatch({
-            type: "data",
-            data: newData
-          });
-          return {
-            timestamp,
-            maxAge,
-            data: newData
-          };
-        }).then(() => {
-          console.log("updated data");
-        }).catch(() => {
+      switch (type) {
+        case "CACHED":
+        case "COMPLETE":
           dispatch({
             type: "loading",
             loading: false
           });
-          console.error("save to indexedDB failed");
-        });
-      } else {
-        dispatch({
-          type: "error",
-          error: new Error(type)
-        });
+          break;
+        case "DATA":
+          dispatch({
+            type: "data",
+            data
+          });
+          break;
+        case "PRE_LOAD":
+          dispatch({
+            type: "pre-load",
+            data
+          });
+          break;
+        default:
+          dispatch({
+            type: "error",
+            error: new Error(type)
+          });
+          break;
       }
     });
     let serializedMw = middleware ? serializeFunction(middleware) : void 0;
@@ -201,7 +110,8 @@ function useFetch() {
       url,
       fetchOptions,
       existingData: state.data,
-      middleware: serializedMw
+      middleware: serializedMw,
+      maxAge
     });
   };
   useEffect(() => {
