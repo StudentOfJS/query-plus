@@ -2,7 +2,6 @@ import type { createArrayOfUpdatesType, ArrayOfStringAnyTuple, StringAnyTuple } 
 
 export * from "./state_tools";
 export * from "./store_tools";
-export * from "./poll";
 
 export const DAY = 24 * 60 * 60 * 1000;
 

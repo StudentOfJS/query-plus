@@ -7,9 +7,7 @@ import {
 	store,
 } from "../utils";
 
-import PollWorker from "./polling_worker.js?worker&inline";
-
-import type { WorkerResponseType, ValueType, FetchWorkerRequestType } from "../types";
+import type { ValueType, FetchWorkerRequestType } from "../types";
 
 const { remove, getData, setData, updateData } = store();
 
@@ -33,53 +31,10 @@ self.addEventListener(
 		const { type } = event.data;
 		let controller: AbortController | undefined = new AbortController();
 		let signal = controller?.signal;
-		let pollWorker = new PollWorker();
+
 		if (type === "cancel") {
 			controller?.abort();
-			pollWorker?.postMessage({ type: "cancel" });
-			pollWorker.terminate();
 		}
-		if (type === "poll") {
-			let {
-				existingData,
-				url,
-				options,
-				interval,
-				maxAttempts,
-				compareKeys,
-			} = event.data;
-			fetch(url, options ? { ...options, signal } : { signal })
-				.then(handleResponse)
-				.then(
-					(data: unknown) => {
-						if (isMatch(existingData, data, compareKeys)) {
-							self.postMessage({ type: "CACHED", data });
-						} else {
-							setData(url, { timestamp: Date.now(), data });
-							self.postMessage({ type: "DATA", data });
-						}
-					},
-				)
-				.catch(handleError)
-				.finally(() => {
-					pollWorker?.postMessage({
-						type,
-						url,
-						options,
-						interval,
-						maxAttempts,
-						existingData,
-						compareKeys,
-					});
-				});
-			pollWorker?.addEventListener(
-				"message",
-				({ data }: WorkerResponseType) => {
-					self.postMessage(data);
-				},
-			);
-		}
-
 		if (type === "pre-fetch") {
 			let { prefetch } = event.data;
 			prefetch.forEach(({middleware, url, options, maxAge}:FetchWorkerRequestType) => {
