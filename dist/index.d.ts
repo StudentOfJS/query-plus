@@ -1,3 +1,3 @@
-import query-plus from './lib/index'
-export default query-plus
+import queryPlus from './lib/index'
+export default queryPlus
 export * from './lib/index'

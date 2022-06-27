@@ -14,13 +14,13 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/query-plus.umd.js",
-  "module": "./dist/query-plus.es.js",
+  "main": "./dist/queryPlus.umd.js",
+  "module": "./dist/queryPlus.es.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/query-plus.es.js",
-      "require": "./dist/query-plus.umd.js"
+      "import": "./dist/queryPlus.es.js",
+      "require": "./dist/queryPlus.umd.js"
     }
   },
   "dependencies": {
