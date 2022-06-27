@@ -1,7 +1,7 @@
 {
   "name": "query-plus",
   "description": "Fetch data from a remote API with React",
-  "version": "0.2.0",
+  "version": "0.6.0",
   "license": "MIT",
   "scripts": {
     "dev": "vite",
@@ -14,13 +14,13 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/query-plus.umd.js",
-  "module": "./dist/query-plus.es.js",
+  "main": "./dist/queryPlus.umd.js",
+  "module": "./dist/queryPlus.es.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/query-plus.es.js",
-      "require": "./dist/query-plus.umd.js"
+      "import": "./dist/queryPlus.es.js",
+      "require": "./dist/queryPlus.umd.js"
     }
   },
   "dependencies": {
