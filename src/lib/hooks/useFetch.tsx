@@ -1,48 +1,17 @@
 import { useRef, useEffect, useReducer } from "react";
 
 import FetchWorker from '../workers/fetch_worker.js?worker&inline'
-import { cleanupWorker, DAY, initialState, isObject, reducer, serializeFunction, UnknownDataResponseType } from "../utils";
+import { cleanupWorker, DAY, initialState, reducer, serializeFunction } from "../utils";
+
+import type { FetchWorkerProps, WorkerResponseType } from "../types";
 
 
-type WorkerResponseType = MessageEvent<{
-    type: string;
-    data?: UnknownDataResponseType
-}>
-
-export interface FetchWorkerProps {
-    fetchOptions?: RequestInit | undefined
-    maxAge?: number
-    middleware?: (data: UnknownDataResponseType) => UnknownDataResponseType
-    url: RequestInfo | URL
-    /* 
-    update will be fetched after the response is received.
-    This is useful for updating after POST PUT or DELETE, 
-    where the api doesn't return all the data and the GET
-    endpoint is different.
-    */
-    update?: {
-        url: RequestInfo | URL,
-        options?: RequestInit | undefined
-    }
-}
-/**
- * useFetch is a React hook that can be initialized with no params.
- * @example const { data, error, loading, fetchWorker } = useFetch()
- * fetchWorker({
- *  url: 'https://swapi.dev/api/people/1/',
- *  middleware: (d:Record<string, any>) => { let keys = Object.keys(d); return {[keys[0]]: d[keys[0]], [keys[1]]: d[keys[1]]}}
- * });
- * 
- * 
- */
 export function useFetch() {
     const [state, dispatch] = useReducer(reducer, initialState);
     const workerRef = useRef<Worker>();
-
-    const fetchWorker = async ({ url, fetchOptions, maxAge = DAY, middleware }: FetchWorkerProps) => {
+    const fetchWorker = async ({ url, options, maxAge = DAY, middleware }: FetchWorkerProps) => {
         let worker = workerRef.current;
         dispatch({ type: 'loading', loading: true });
-
         worker?.addEventListener('message', ({ data: { type, data } }: WorkerResponseType) => {
             switch (type) {
                 case 'CACHED':
@@ -60,8 +29,8 @@ export function useFetch() {
                     break;
             }
         });
-        let serializedMw = middleware ? serializeFunction(middleware) : undefined
-        worker?.postMessage({ type: 'fetch', url, fetchOptions, existingData: state.data, middleware: serializedMw, maxAge });
+        
+        worker?.postMessage({ type: 'fetch', url, options, existingData: state.data, middleware: serializeFunction(middleware), maxAge });
     }
 
     useEffect(() => {
