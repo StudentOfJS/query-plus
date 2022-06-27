@@ -1,5 +1,9 @@
+import type { createArrayOfUpdatesType, ArrayOfStringAnyTuple, StringAnyTuple } from "../types";
+
 export * from "./state_tools";
+export * from "./store_tools";
 export * from "./poll";
+
 export const DAY = 24 * 60 * 60 * 1000;
 
 export function cleanupWorker(worker: Worker | undefined) {
@@ -72,9 +76,7 @@ export const isMatch = (
 };
 
 
-export type StringAnyTuple = [string, any]
-export type ArrayOfStringAnyTuple = Array<StringAnyTuple>
-export type createArrayOfUpdatesType = (oldRecord: Record<string, any>, newRecord: Record<string, any>) => ArrayOfStringAnyTuple
+
 // compare records two entries deep and return an array of tuples
 export const createArrayOfUpdates:createArrayOfUpdatesType = (oldRecord, newRecord) => {
   let changeRegister: ArrayOfStringAnyTuple = Object.entries(oldRecord)
@@ -94,5 +96,5 @@ export const createArrayOfUpdates:createArrayOfUpdatesType = (oldRecord, newReco
   return changeRegister;
 }
 
-export const serializeFunction = (f: Function) => encodeURI(f.toString());
+export const serializeFunction = (f?: Function) => f ? encodeURI(f.toString()) : undefined;
 export const deserializeFunction = (s: string) => new Function(`return ${decodeURI(s)}`)();

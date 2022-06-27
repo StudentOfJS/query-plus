@@ -1,4 +1,6 @@
+import type { createArrayOfUpdatesType } from "../types";
 export * from "./state_tools";
+export * from "./store_tools";
 export * from "./poll";
 export declare const DAY: number;
 export declare function cleanupWorker(worker: Worker | undefined): void;
@@ -8,9 +10,6 @@ export declare const flattenObjectToArray: (obj: Record<string, any>, parent?: s
 export declare const flattenAndSortArray: (arr: Array<any>) => any[];
 export declare const methodType: (options: RequestInit | undefined) => string;
 export declare const isMatch: (a: unknown, b: unknown, compareKeys?: string[] | undefined) => boolean;
-export declare type StringAnyTuple = [string, any];
-export declare type ArrayOfStringAnyTuple = Array<StringAnyTuple>;
-export declare type createArrayOfUpdatesType = (oldRecord: Record<string, any>, newRecord: Record<string, any>) => ArrayOfStringAnyTuple;
 export declare const createArrayOfUpdates: createArrayOfUpdatesType;
-export declare const serializeFunction: (f: Function) => string;
+export declare const serializeFunction: (f?: Function | undefined) => string | undefined;
 export declare const deserializeFunction: (s: string) => any;

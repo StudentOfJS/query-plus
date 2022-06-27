@@ -1,23 +1,20 @@
-import type { FetchWorkerProps } from "../types";
-export declare function useFetch(): {
+import type { PollWorkerProps } from "../types";
+export declare function usePoll(props: PollWorkerProps): {
     data: any;
     loading: boolean;
     preload: boolean;
     error: undefined;
     update: boolean;
-    fetchWorker: ({ url, options, maxAge, middleware }: FetchWorkerProps) => Promise<void>;
 } | {
     error: any;
     loading: boolean;
     preload: boolean;
     data: import("../utils").UnknownDataResponseType;
     update: boolean;
-    fetchWorker: ({ url, options, maxAge, middleware }: FetchWorkerProps) => Promise<void>;
 } | {
     loading: any;
     data: import("../utils").UnknownDataResponseType;
     error?: Error | undefined;
     preload: boolean;
     update: boolean;
-    fetchWorker: ({ url, options, maxAge, middleware }: FetchWorkerProps) => Promise<void>;
 };

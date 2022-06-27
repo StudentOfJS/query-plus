@@ -1,32 +1,18 @@
-import { del, get, set, update, createStore } from "idb-keyval";
 import {
 	deserializeFunction,
 	methodType,
 	isMatch,
 	dataExpired,
 	isObject,
-	type UnknownDataResponseType,
+	store,
 } from "../utils";
 
-import type { UseStore } from "idb-keyval";
 import PollWorker from "./polling_worker.js?worker&inline";
 
-type ValueType = { timestamp: number; maxAge: number; data: any };
-type WorkerResponseType = MessageEvent<
-	{
-		type: string;
-		data?: UnknownDataResponseType;
-	}
->;
+import type { WorkerResponseType, ValueType, FetchWorkerBaseRequestType } from "../types";
 
-const DB_NAME = "usestore-db";
-const DB_STORE = "usestore-db";
-const store: UseStore = createStore(DB_NAME, DB_STORE);
-const remove = (key: IDBValidKey) => del(key, store);
-const getData = (key: IDBValidKey) => get(key, store);
-const setData = (key: IDBValidKey, value: unknown) => set(key, value, store);
-const updateData = (key: IDBValidKey, updater: (oldValue: any) => any) =>
-	update(key, updater, store);
+const { remove, getData, setData, updateData } = store();
+
 const handleResponse = (response: Response) => {
 	if (!response.ok || response.status === 404) {
 		throw new Error(`HTTP error! Status: ${response.status}`);
@@ -92,6 +78,32 @@ self.addEventListener(
 					self.postMessage(data);
 				},
 			);
+		}
+
+		if (type === "pre-fetch") {
+			let { prefetch } = event.data;
+			prefetch.forEach((d: FetchWorkerBaseRequestType) => {
+				getData(d.url.toString())
+					.then(
+						(value: ValueType) => {
+							if (!value) {
+								throw new Error("no value found in db");
+							}
+							if (dataExpired(value?.maxAge, value?.timestamp)) {
+								remove(d.url.toString());
+								throw new Error("data expired");
+							}
+						},
+					)
+					.catch(() => {
+						fetch(d.url.toString(), { signal, ...d.options! }).then(
+							handleResponse,
+						).then(data => {
+							let x = d.middleware ? d.middleware(data) : data;
+							setData(d.url.toString(), { timestamp: Date.now(), data: x, maxAge: d.maxAge! });
+						}).catch(() => { console.info("no data found") });
+					});
+			})
 		}
 
 		if (type === "fetch") {
