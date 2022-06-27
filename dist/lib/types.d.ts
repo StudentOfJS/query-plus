@@ -12,6 +12,9 @@ export interface FetchWorkerBaseRequestType {
     middleware?: (data: UnknownDataResponseType) => UnknownDataResponseType
     url: RequestInfo | URL
 }
+export interface FetchWorkerRequestType extends FetchWorkerBaseRequestType {
+    middleware?: string
+}
 
 export interface FetchWorkerProps extends FetchWorkerBaseRequestType {
     /* 

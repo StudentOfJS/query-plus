@@ -12,4 +12,4 @@ export declare const methodType: (options: RequestInit | undefined) => string;
 export declare const isMatch: (a: unknown, b: unknown, compareKeys?: string[] | undefined) => boolean;
 export declare const createArrayOfUpdates: createArrayOfUpdatesType;
 export declare const serializeFunction: (f?: Function | undefined) => string | undefined;
-export declare const deserializeFunction: (s: string) => any;
+export declare const deserializeFunction: (s?: string | undefined) => any;

@@ -9,7 +9,7 @@ import {
 
 import PollWorker from "./polling_worker.js?worker&inline";
 
-import type { WorkerResponseType, ValueType, FetchWorkerBaseRequestType } from "../types";
+import type { WorkerResponseType, ValueType, FetchWorkerRequestType } from "../types";
 
 const { remove, getData, setData, updateData } = store();
 
@@ -82,27 +82,15 @@ self.addEventListener(
 
 		if (type === "pre-fetch") {
 			let { prefetch } = event.data;
-			prefetch.forEach((d: FetchWorkerBaseRequestType) => {
-				getData(d.url.toString())
-					.then(
-						(value: ValueType) => {
-							if (!value) {
-								throw new Error("no value found in db");
-							}
-							if (dataExpired(value?.maxAge, value?.timestamp)) {
-								remove(d.url.toString());
-								throw new Error("data expired");
-							}
-						},
-					)
-					.catch(() => {
-						fetch(d.url.toString(), { signal, ...d.options! }).then(
-							handleResponse,
-						).then(data => {
-							let x = d.middleware ? d.middleware(data) : data;
-							setData(d.url.toString(), { timestamp: Date.now(), data: x, maxAge: d.maxAge! });
-						}).catch(() => { console.info("no data found") });
-					});
+			prefetch.forEach(({middleware, url, options, maxAge}:FetchWorkerRequestType) => {
+				let fn = deserializeFunction(middleware);
+				fetch(url.toString(), { signal, ...options! }).then(
+					handleResponse,
+				).then(data => {
+					setData(url.toString(), { timestamp: Date.now(), data: fn(data), maxAge: maxAge })
+					.then(() => {console.log(`saved prefetch ${url}`)})
+					.catch(err => {console.log(`error saving prefetch ${url}`, err)});
+				}).catch(() => { console.info("no data found") });
 			})
 		}
 
@@ -116,10 +104,8 @@ self.addEventListener(
 				update,
 			} = event.data;
 			const handleData = (data: unknown) => {
-				if (middleware) {
-					let fn = deserializeFunction(middleware);
-					data = fn(data);
-				}
+				let fn = deserializeFunction(middleware);
+				data = fn(data);
 				let hasChanged = !existingData || !isMatch(existingData, data);
 				if (hasChanged) {
 					self.postMessage({ type: "DATA", data });

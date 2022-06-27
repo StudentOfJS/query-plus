@@ -97,4 +97,4 @@ export const createArrayOfUpdates:createArrayOfUpdatesType = (oldRecord, newReco
 }
 
 export const serializeFunction = (f?: Function) => f ? encodeURI(f.toString()) : undefined;
-export const deserializeFunction = (s: string) => new Function(`return ${decodeURI(s)}`)();
+export const deserializeFunction = (s?: string) => s ? new Function(`return ${decodeURI(s)}`)() : (d:unknown) => d;

@@ -15,7 +15,7 @@ export function usePreFetch(prefetch?: Array<FetchWorkerBaseRequestType>) {
     }, [prefetch, worker.current]);
 
     useEffect(() => {
-        // worker.current = new FetchWorker()
+        worker.current = new FetchWorker()
         return () => {
             cleanupWorker(worker.current);
         }
