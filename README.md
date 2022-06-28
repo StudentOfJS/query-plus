@@ -10,11 +10,11 @@ Sometimes APIs are slow, sometimes you need to process the data before you consu
 
 ##  getting started
 
-npm i query-plus@0.6.0
+npm i query-plus@
 
-yarn add query-plus@0.6.0
+yarn add query-plus
 
-pnpm add query-plus@0.6.0
+pnpm add query-plus
 
 ##  useFetch
 
@@ -27,7 +27,7 @@ useFetch is the react hook that we provide to make using Query+ a breeze.
     const { fetchWorker, data, error, loading } = useFetch()
     
     useEffect(() => {
-    fetchWorker({ url: 'https://swapi.dev/api/people/3/' })
+    fetchWorker({ url: 'https://api.test.com' })
     }, []);
 
 >  **ProTip:** You can use multiple **useFetch()** per component. Although you may be better off with a new component.
