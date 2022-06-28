@@ -10,11 +10,11 @@ Sometimes APIs are slow, sometimes you need to process the data before you consu
 
 ##  getting started
 
-npm i query-plus
+npm i query-plus@0.6.0
 
-yarn add query-plus
+yarn add query-plus@0.6.0
 
-pnpm add query-plus
+pnpm add query-plus@0.6.0
 
 ##  useFetch
 
