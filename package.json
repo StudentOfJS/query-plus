@@ -1,13 +1,13 @@
 {
   "name": "query-plus",
   "description": "Fetch data from a remote API with React",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "prepack": "json -f package.json -I -e \"delete this.devDependencies; delete this.dependencies\"",
+    "prepack": "json -f package.json -I -e \"delete this.devDependencies\"",
     "test": "vitest --config ./vitest.config.ts",
     "coverage": "vitest run --coverage"
   },
