@@ -4,7 +4,7 @@
 
   
 
-Sometimes APIs are slow, sometimes you need to process the data before you consume it and occasionly you want to store the response for reuese later. These factors all have an impact on the performance and percieved performance of your site. Waiting for a slow api, stuck on a loading screen, this is a familiar and unpleasant problem that we all encounter at some point. How about that filter and map transform you run on the data? This will add to the time your users are waiting behind a spinner. Do you have an api that usually returns the same JSON each time it's called? Seems inefficient and bad reason to keep your users waiting
+Sometimes APIs are slow, sometimes you need to process the data before you consume it and occasionly you want to store the response for reuese later. These factors all have an impact on the performance and percieved performance of your site. Waiting for a slow api, stuck on a loading screen, this is a familiar and unpleasant problem. How about that filter and map transform you run on the data? This will add to the time your users are waiting behind a spinner. Do you have an api that usually returns the same JSON? Seems inefficient and a bad reason to keep your users waiting
 
   
 
