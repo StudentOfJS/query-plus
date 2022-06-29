@@ -11,9 +11,11 @@ export function useFetch() {
     const workerRef = useRef<Worker>();
     const fetchWorker = async ({ url, options, maxAge = DAY, preferUseCache, middleware }: FetchWorkerProps) => {
         let worker = workerRef.current;
-        dispatch({ type: 'loading', loading: true });
         worker?.addEventListener('message', ({ data: { type, data } }: WorkerResponseType) => {
             switch (type) {
+                case 'LOADING':
+                    dispatch({ type: 'loading', loading: true });
+                    break;
                 case 'CACHED':
                 case 'COMPLETE':
                     dispatch({ type: 'loading', loading: false })

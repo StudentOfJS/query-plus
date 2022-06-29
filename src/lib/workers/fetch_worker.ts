@@ -84,6 +84,7 @@ self.addEventListener(
 			};
 			let method = methodType(options);
 			if (method === "DELETE") {
+				self.postMessage({type: "LOADING"});
 				remove(url.toString());
 				fetch(url, options)
 					.then(() => {
@@ -117,18 +118,21 @@ self.addEventListener(
 								data: !preferUseCache && match ? undefined : value?.data,
 							};
 							self.postMessage(postMessageData);
-							if (!preferUseCache) {
-								fetch(url, options ? { ...options, signal } : { signal }).then(
-									handleResponse,
-								).then(handleData).catch(handleError)
-							}
 						},
 					)
 					.catch((err) => {
 						console.info(err?.message);
+						preferUseCache = false;
 					});
+					if (!preferUseCache) {
+						self.postMessage({type: "LOADING"});
+						fetch(url, options ? { ...options, signal } : { signal }).then(
+							handleResponse,
+						).then(handleData).catch(handleError)
+					}
 			}
 			if (method === "PUT" || method === "POST") {
+				self.postMessage({type: "LOADING"});
 				fetch(url, options ? { ...options, signal } : { signal })
 					.then(handleResponse)
 					.then((data) => {
