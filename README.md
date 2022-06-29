@@ -1,6 +1,5 @@
 #  Query+
-## fetch improved
-### React hook library
+### React hook library - fetch plus a little extra
 
   
 
