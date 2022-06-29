@@ -104,7 +104,7 @@ same as the init variable from the [fetch API](https://developer.mozilla.org/en-
 
   
 
-If this boolean is set to true and non-epired data exists in the DB, then the API will not be called.
+If this boolean is set to true and non-expired data exists in the DB, then the API will not be called.
  
   
 
