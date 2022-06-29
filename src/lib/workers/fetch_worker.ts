@@ -101,7 +101,6 @@ self.addEventListener(
 					.catch(handleError);
 			}
 			if (method === "GET") {
-				let cache_used = false;
 				getData(url.toString())
 					.then(
 						(value: ValueType) => {
@@ -113,20 +112,21 @@ self.addEventListener(
 								throw new Error("data expired");
 							}
 							let match = isMatch(value?.data, existingData);
-							preferUseCache && (cache_used = true);
 							let postMessageData = {
 								type: preferUseCache ? "DATA" : match ? "CACHED" : "PRE_LOAD",
 								data: !preferUseCache && match ? undefined : value?.data,
 							};
 							self.postMessage(postMessageData);
+							if (!preferUseCache) {
+								fetch(url, options ? { ...options, signal } : { signal }).then(
+									handleResponse,
+								).then(handleData).catch(handleError)
+							}
 						},
 					)
 					.catch((err) => {
 						console.info(err?.message);
 					});
-				!cache_used && fetch(url, options ? { ...options, signal } : { signal }).then(
-					handleResponse,
-				).then(handleData).catch(handleError);
 			}
 			if (method === "PUT" || method === "POST") {
 				fetch(url, options ? { ...options, signal } : { signal })
