@@ -64,7 +64,7 @@ useFetch is the react hook that we provide to make using Query+ a breeze.
   
 
     const handleFetch = (() => {
-      fetchWorker({ url, options, maxAge, middleware })
+      fetchWorker({ url, preferUseCache, options, maxAge, middleware })
     });
 
   
@@ -99,7 +99,16 @@ maxAge is the maximum amount of time stored data is valid in ms.
 
 same as the init variable from the [fetch API](https://developer.mozilla.org/en-US/docs/Web/API/fetch)
 
-  ##  usePreFetch
+ 
+>  **preferUseCache**
+
+  
+
+If this boolean is set to true and non-epired data exists in the DB, then the API will not be called.
+ 
+  
+
+##  usePreFetch
   this is another react hook, that I would suggest using earlier in your component tree hierarchy.
 
     usePreFetch([{  url:  'https://api.test/api/people/2/',  middleware:  (data:  any)  =>  ({name:  data?.name})  }, {url: 'https://api.test/api/properties/10'}])
