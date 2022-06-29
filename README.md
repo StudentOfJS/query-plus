@@ -110,4 +110,4 @@ usePrefetch to pre fetch data and save it for faster retrival later. It takes an
  - middleware - a function that accepts the json data, performs some action on the data and then returns it.
  - maxAge: the maximum time in ms that the data remains valid.
 
-Thanks to [Jake Archibald](https://github.com/jakearchibald) for creating [idb-keyval](https://github.com/jakearchibald/idb). We use it to store our data on indexedDB.
+Thanks to [Jake Archibald](https://github.com/jakearchibald) for creating [idb-keyval](https://github.com/jakearchibald/idb). Enabling us to easily access indexedDB with a really nice promise based api.
