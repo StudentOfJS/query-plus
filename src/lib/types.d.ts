@@ -9,6 +9,7 @@ export type WorkerResponseType = MessageEvent<{
 export interface FetchWorkerBaseRequestType {
     options?: RequestInit | undefined
     maxAge?: number
+    preferUseCache?: boolean
     middleware?: (data: UnknownDataResponseType) => UnknownDataResponseType
     url: RequestInfo | URL
 }

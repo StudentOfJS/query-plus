@@ -37,14 +37,14 @@ self.addEventListener(
 		}
 		if (type === "pre-fetch") {
 			let { prefetch } = event.data;
-			prefetch.forEach(({middleware, url, options, maxAge}:FetchWorkerRequestType) => {
+			prefetch.forEach(({ middleware, url, options, maxAge }: FetchWorkerRequestType) => {
 				let fn = deserializeFunction(middleware);
 				fetch(url.toString(), { signal, ...options! }).then(
 					handleResponse,
 				).then(data => {
 					setData(url.toString(), { timestamp: Date.now(), data: fn(data), maxAge: maxAge })
-					.then(() => {console.log(`saved prefetch ${url}`)})
-					.catch(err => {console.log(`error saving prefetch ${url}`, err)});
+						.then(() => { console.log(`saved prefetch ${url}`) })
+						.catch(err => { console.log(`error saving prefetch ${url}`, err) });
 				}).catch(() => { console.info("no data found") });
 			})
 		}
@@ -52,6 +52,7 @@ self.addEventListener(
 		if (type === "fetch") {
 			let {
 				existingData,
+				preferUseCache,
 				url,
 				options,
 				maxAge,
@@ -100,6 +101,7 @@ self.addEventListener(
 					.catch(handleError);
 			}
 			if (method === "GET") {
+				let cache_used = false;
 				getData(url.toString())
 					.then(
 						(value: ValueType) => {
@@ -110,18 +112,19 @@ self.addEventListener(
 								remove(url.toString());
 								throw new Error("data expired");
 							}
-							self.postMessage(
-								isMatch(existingData, value?.data) ? { type: "CACHED" } : {
-									type: "PRE_LOAD",
-									data: value?.data,
-								},
-							);
+							let match = isMatch(value?.data, existingData);
+							preferUseCache && (cache_used = true);
+							let postMessageData = {
+								type: preferUseCache ? "DATA" : match ? "CACHED" : "PRE_LOAD",
+								data: !preferUseCache && match ? undefined : value?.data,
+							};
+							self.postMessage(postMessageData);
 						},
 					)
 					.catch((err) => {
 						console.info(err?.message);
 					});
-				fetch(url, options ? { ...options, signal } : { signal }).then(
+				!cache_used && fetch(url, options ? { ...options, signal } : { signal }).then(
 					handleResponse,
 				).then(handleData).catch(handleError);
 			}

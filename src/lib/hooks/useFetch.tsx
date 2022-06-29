@@ -9,7 +9,7 @@ import type { FetchWorkerProps, WorkerResponseType } from "../types";
 export function useFetch() {
     const [state, dispatch] = useReducer(reducer, initialState);
     const workerRef = useRef<Worker>();
-    const fetchWorker = async ({ url, options, maxAge = DAY, middleware }: FetchWorkerProps) => {
+    const fetchWorker = async ({ url, options, maxAge = DAY, preferUseCache, middleware }: FetchWorkerProps) => {
         let worker = workerRef.current;
         dispatch({ type: 'loading', loading: true });
         worker?.addEventListener('message', ({ data: { type, data } }: WorkerResponseType) => {
@@ -30,7 +30,7 @@ export function useFetch() {
             }
         });
         
-        worker?.postMessage({ type: 'fetch', url, options, existingData: state.data, middleware: serializeFunction(middleware), maxAge });
+        worker?.postMessage({ type: 'fetch', url, options, existingData: state.data, middleware: serializeFunction(middleware), maxAge, preferUseCache });
     }
 
     useEffect(() => {
