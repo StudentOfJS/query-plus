@@ -1,7 +1,12 @@
 
-<img src="https://user-images.githubusercontent.com/20704726/176833898-05f85f35-e2c2-4496-b5ff-f02b03d45b0b.png" alt="Query+ logo"/> 
 
-# Query+ 
+
+<div align="center"><img src="https://user-images.githubusercontent.com/20704726/176831638-a5c27908-365e-4edc-aac8-c7073fc18dfb.png" width="200" alt="Query+ logo"/>  <h1>Query+</h1></div> 
+
+
+
+
+
 ### install
 
     yarn add query-plus
@@ -23,8 +28,9 @@ or
 
  
 useFetch is the main React hook of Query+.
-  
-
+<div>
+  <img src="https://repository-images.githubusercontent.com/505699390/e7071961-16bf-4dc2-b31e-f72eca2940a5" alt="useFetch hook example" width="500" />
+</div>
     const { fetchWorker, data, error, loading } = useFetch()
     
     useEffect(() => {
@@ -112,9 +118,6 @@ Sometimes APIs are slow, sometimes you need to process the data before you consu
 
 **Query+** tackles these issues by storing your api responses and only updating them when the new response differs from the stored data. This comparison and if you choose the middlware function you pass in for processing the response, runs in a **web worker** freeing the main thread for clientside interactions or whatever you want to prioritise. It means that your data is available immediatly, yet you aren't going to miss any updates.
 
-  
-
-![useFetch hook example](https://repository-images.githubusercontent.com/505699390/e7071961-16bf-4dc2-b31e-f72eca2940a5)
 
    ### technical
  Data fetching, data processing and data storage tasks run in a web worker. This is to leave the main thread available for more critical tasks, improving performance metrics and user experience.
