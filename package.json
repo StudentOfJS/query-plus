@@ -2,7 +2,7 @@
   "name": "query-plus",
   "author": "Rod Lewis",
   "description": "Fetch data from a remote API with React",
-  "version": "0.10.8",
+  "version": "0.10.9",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -20,7 +20,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "prepack": "json -f package.json -I -e \"delete this.devDependencies;delete this.dependencies\"",
+    "prepack": "json -f package.json -I -e \"delete this.devDependencies;\"",
     "test": "vitest --config ./vitest.config.ts",
     "coverage": "vitest run --coverage"
   },
