@@ -16,6 +16,7 @@ __tests__
 !.vscode/extensions.json
 .idea
 .DS_Store
+*.yaml
 *.suo
 *.ntvs*
 *.njsproj
