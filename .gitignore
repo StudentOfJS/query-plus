@@ -16,12 +16,9 @@ __tests__
 !.vscode/extensions.json
 .idea
 .DS_Store
+*.yaml
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-*.config.ts
-*.config.js
-*config.json
-*tsconfig*
