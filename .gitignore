@@ -22,7 +22,3 @@ __tests__
 *.njsproj
 *.sln
 *.sw?
-*.config.ts
-*.config.js
-*config.json
-*tsconfig*
