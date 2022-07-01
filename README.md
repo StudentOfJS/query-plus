@@ -1,4 +1,8 @@
-#  Query+
+
+<img src="https://user-images.githubusercontent.com/20704726/176833898-05f85f35-e2c2-4496-b5ff-f02b03d45b0b.png" alt="Query+ logo"/> 
+
+# Query+ 
+
 ### React hook library - fetch plus a little extra
 
   
