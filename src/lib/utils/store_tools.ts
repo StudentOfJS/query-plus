@@ -3,7 +3,7 @@ import { ValueType } from "../types";
 
 const DB_STORE = "query-store";
 export declare type UseStore = <T>(txMode: IDBTransactionMode, callback: (store: IDBObjectStore) => T | PromiseLike<T>) => Promise<T>;
-const promisifyRequest = <T = undefined>(request: IDBRequest<T> | IDBTransaction ): Promise<T> => {
+export const promisifyRequest = <T = undefined>(request: IDBRequest<T> | IDBTransaction ): Promise<T> => {
     return new Promise<T>((resolve, reject) => {
         // @ts-ignore
         request.oncomplete = request.onsuccess = () => resolve(request.result);
