@@ -1,3 +1,4 @@
+// modified code from idb-keyval to suit our needs
 import { ValueType } from "../types";
 
 const DB_STORE = "query-store";
@@ -13,8 +14,8 @@ const promisifyRequest = <T = undefined>(request: IDBRequest<T> | IDBTransaction
 export function store () {
     const request = indexedDB.open("query-db");
     request.onupgradeneeded = () => request.result.createObjectStore(DB_STORE);
-    const dbp = promisifyRequest(request);
-    const useStore: UseStore = (txMode, callback) => dbp.then((db) => callback(db.transaction(DB_STORE, txMode).objectStore(DB_STORE)));
+    const dbpromise = promisifyRequest(request);
+    const useStore: UseStore = (txMode, callback) => dbpromise.then((db) => callback(db.transaction(DB_STORE, txMode).objectStore(DB_STORE)));
     return {
         del: (key: IDBValidKey) => useStore('readwrite', (store) => {store.delete(key); return promisifyRequest(store.transaction)}),
         get: (key: IDBValidKey): Promise<ValueType> => useStore<ValueType>('readonly', (store) => {store.get(key); return promisifyRequest(store.transaction)}),
