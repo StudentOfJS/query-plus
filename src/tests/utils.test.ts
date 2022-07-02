@@ -1,6 +1,6 @@
 import { expect, test } from 'vitest'
 
-import { isMatch, createArrayOfUpdates, DAY, dataExpired, methodType, isObject } from "../lib/utils/index"
+import { isMatch, DAY, dataExpired, methodType, isObject } from "../lib/utils/index"
 
 test('dataExpired()', () => {
     let twoDaysAGo = Date.now() - DAY * 2
@@ -94,44 +94,4 @@ test('isMatch()', () => {
             b: ['a', 'b']
         }
     })).toBe(true)
-})
-
-test('createArrayOfUpdates()', () => {
-    let nochange = createArrayOfUpdates({
-        test: {
-            b: ['b', 'a'],
-            a: {
-                aa: 'winner'
-            },
-            
-        }
-    }, {
-        test: {
-            a: {
-                aa: 'winner'
-            },
-            b: ['a', 'b']
-        }
-    })
-    expect(nochange).toStrictEqual([])
-
-    let changeArray = createArrayOfUpdates({
-        test: {
-            b: ['b', 'a'],
-            a: {
-                aa: 'the best'
-            },
-            
-        }
-    }, {
-        test: {
-            a: {
-                aa: 'winner'
-            },
-            b: ['a', 'b']
-        }
-    })
-    let change = JSON.stringify(changeArray)
-    let testChange = JSON.stringify([ [ 'test.a', { aa: 'winner' } ] ])
-    expect(change).toMatch(testChange)
 })

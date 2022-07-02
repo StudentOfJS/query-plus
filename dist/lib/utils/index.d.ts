@@ -1,4 +1,3 @@
-import type { createArrayOfUpdatesType } from "../types";
 export * from "./state_tools";
 export * from "./store_tools";
 export declare const DAY: number;
@@ -9,6 +8,5 @@ export declare const flattenObjectToArray: (obj: Record<string, any>, parent?: s
 export declare const flattenAndSortArray: (arr: Array<any>) => any[];
 export declare const methodType: (options: RequestInit | undefined) => string;
 export declare const isMatch: (a: unknown, b: unknown, compareKeys?: string[] | undefined) => boolean;
-export declare const createArrayOfUpdates: createArrayOfUpdatesType;
 export declare const serializeFunction: (f?: Function | undefined) => string | undefined;
 export declare const deserializeFunction: (s?: string | undefined) => any;

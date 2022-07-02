@@ -1,4 +1,4 @@
-import type { createArrayOfUpdatesType, ArrayOfStringAnyTuple, StringAnyTuple } from "../types";
+import type { ArrayOfStringAnyTuple, StringAnyTuple } from "../types";
 
 export * from "./state_tools";
 export * from "./store_tools";
@@ -73,27 +73,6 @@ export const isMatch = (
   }
   return JSON.stringify(a) === JSON.stringify(b);
 };
-
-
-
-// compare records two entries deep and return an array of tuples
-export const createArrayOfUpdates:createArrayOfUpdatesType = (oldRecord, newRecord) => {
-  let changeRegister: ArrayOfStringAnyTuple = Object.entries(oldRecord)
-    .reduce((register: any, entry: StringAnyTuple) => {
-      const [key, value] = entry
-      let newValue: Record<string, any> = newRecord[key]
-      let oldValue: Record<string, any> = oldRecord[key]
-      if(isMatch(value, newValue)) return register;
-      if(isObject(newValue)) {
-        let secondLevelKeys = Object.keys(newValue)
-          .map(k => isMatch(newValue[k], oldValue[k]) ? undefined : [`${key}.${k}`, newValue[k]])
-          .filter(tuple => tuple)
-        return [...register, ...secondLevelKeys];
-      }
-      return register
-    }, [])
-  return changeRegister;
-}
 
 export const serializeFunction = (f?: Function) => f ? encodeURI(f.toString()) : undefined;
 export const deserializeFunction = (s?: string) => s ? new Function(`return ${decodeURI(s)}`)() : (d:unknown) => d;

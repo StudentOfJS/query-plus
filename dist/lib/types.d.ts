@@ -1,7 +1,5 @@
 export type StringAnyTuple = [string, any]
 export type ArrayOfStringAnyTuple = Array<StringAnyTuple>
-export type createArrayOfUpdatesType = (oldRecord: Record<string, any>, newRecord: Record<string, any>) => ArrayOfStringAnyTuple
-
 export type WorkerResponseType = MessageEvent<{
     type: string;
     data?: UnknownDataResponseType
