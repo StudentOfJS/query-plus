@@ -1,4 +1,5 @@
-export type UnknownDataResponseType = Array<unknown> | Record<string, unknown> | undefined
+import type { UnknownDataResponseType } from "../types";
+
 export interface StateType {
     data: UnknownDataResponseType;
     error?: Error;

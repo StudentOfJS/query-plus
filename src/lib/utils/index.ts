@@ -1,5 +1,3 @@
-import type { ArrayOfStringAnyTuple, StringAnyTuple } from "../types";
-
 export * from "./state_tools";
 export * from "./store_tools";
 
