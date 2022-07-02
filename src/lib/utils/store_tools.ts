@@ -18,8 +18,8 @@ export function store () {
     return {
         del: (key: IDBValidKey) => useStore('readwrite', (store) => {store.delete(key); return promisifyRequest(store.transaction)}),
         get: (key: IDBValidKey): Promise<ValueType> => useStore<ValueType>('readonly', (store) => {store.get(key); return promisifyRequest(store.transaction)}),
-        set: (key: IDBValidKey, value: any) => useStore('readwrite', (store) => {store.put(value, key); return promisifyRequest(store.transaction)}),
-        put: (key: IDBValidKey, updater: (oldValue: any | undefined) => any) => useStore('readwrite', (store) => new Promise((resolve, reject) => {
+        set: (key: IDBValidKey, value: any) => useStore<ValueType>('readwrite', (store) => {store.put(value, key); return promisifyRequest(store.transaction)}),
+        put: (key: IDBValidKey, updater: (oldValue: ValueType) => ValueType) => useStore<ValueType>('readwrite', (store) => new Promise((resolve, reject) => {
             store.get(key).onsuccess = function () {
               try {
                 store.put(updater(this.result), key);

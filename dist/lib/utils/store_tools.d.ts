@@ -3,7 +3,7 @@ export declare type UseStore = <T>(txMode: IDBTransactionMode, callback: (store:
 export declare function store(): {
     del: (key: IDBValidKey) => Promise<undefined>;
     get: (key: IDBValidKey) => Promise<ValueType>;
-    set: (key: IDBValidKey, value: any) => Promise<undefined>;
-    put: (key: IDBValidKey, updater: (oldValue: any | undefined) => any) => Promise<unknown>;
+    set: (key: IDBValidKey, value: any) => Promise<ValueType>;
+    put: (key: IDBValidKey, updater: (oldValue: ValueType) => ValueType) => Promise<ValueType>;
     clear: () => Promise<undefined>;
 };
