@@ -28,9 +28,7 @@ or
 
  
 useFetch is the main React hook of Query+.
-<div>
-  <img src="https://repository-images.githubusercontent.com/505699390/e7071961-16bf-4dc2-b31e-f72eca2940a5" alt="useFetch hook example" width="500" />
-</div>
+
     const { fetchWorker, data, error, loading } = useFetch()
     
     useEffect(() => {
