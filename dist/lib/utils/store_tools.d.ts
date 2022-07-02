@@ -1,6 +1,10 @@
+import { ValueType } from "../types";
+export declare type UseStore = <T>(txMode: IDBTransactionMode, callback: (store: IDBObjectStore) => T | PromiseLike<T>) => Promise<T>;
+export declare const promisifyRequest: <T = undefined>(request: IDBRequest<T> | IDBTransaction) => Promise<T>;
 export declare function store(): {
-    remove: (key: IDBValidKey) => Promise<void>;
-    getData: (key: IDBValidKey) => Promise<any>;
-    setData: (key: IDBValidKey, value: unknown) => Promise<void>;
-    updateData: (key: IDBValidKey, updater: (oldValue: any) => any) => Promise<void>;
+    del: (key: IDBValidKey) => Promise<undefined>;
+    get: (key: IDBValidKey) => Promise<ValueType>;
+    set: (key: IDBValidKey, value: any) => Promise<ValueType>;
+    put: (key: IDBValidKey, updater: (oldValue: ValueType) => ValueType) => Promise<ValueType>;
+    clear: () => Promise<undefined>;
 };

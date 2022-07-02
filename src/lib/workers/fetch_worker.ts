@@ -9,7 +9,7 @@ import {
 
 import type { ValueType, FetchWorkerRequestType } from "../types";
 
-const { remove, getData, setData, updateData } = store();
+const { del, get, set, put } = store();
 
 const handleResponse = (response: Response) => {
 	if (!response.ok || response.status === 404) {
@@ -42,7 +42,7 @@ self.addEventListener(
 				fetch(url.toString(), { signal, ...options! }).then(
 					handleResponse,
 				).then(data => {
-					setData(url.toString(), { timestamp: Date.now(), data: fn(data), maxAge: maxAge })
+					set(url.toString(), { timestamp: Date.now(), data: fn(data), maxAge: maxAge })
 						.then(() => { console.log(`saved prefetch ${url}`) })
 						.catch(err => { console.log(`error saving prefetch ${url}`, err) });
 				}).catch(() => { console.info("no data found") });
@@ -65,7 +65,7 @@ self.addEventListener(
 				let hasChanged = !existingData || !isMatch(existingData, data);
 				if (hasChanged) {
 					self.postMessage({ type: "DATA", data });
-					setData(
+					set(
 						url.toString(),
 						{
 							data,
@@ -85,7 +85,7 @@ self.addEventListener(
 			let method = methodType(options);
 			if (method === "DELETE") {
 				self.postMessage({type: "LOADING"});
-				remove(url.toString());
+				del(url.toString());
 				fetch(url, options)
 					.then(() => {
 						if (update) {
@@ -102,14 +102,14 @@ self.addEventListener(
 					.catch(handleError);
 			}
 			if (method === "GET") {
-				getData(url.toString())
+				get(url.toString())
 					.then(
 						(value: ValueType) => {
 							if (!value) {
 								throw new Error("no value found in db");
 							}
 							if (dataExpired(value?.maxAge, value?.timestamp)) {
-								remove(url.toString());
+								del(url.toString());
 								throw new Error("data expired");
 							}
 							let match = isMatch(value?.data, existingData);
@@ -144,7 +144,7 @@ self.addEventListener(
 									throw err;
 								});
 						} else {
-							updateData(
+							put(
 								url.toString(),
 								(oldValue: ValueType) => {
 									let timestamp = Date.now();
