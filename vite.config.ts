@@ -20,10 +20,11 @@ export default defineConfig({
             fileName: (format) => `queryPlus.${format}.js`,
         },
         rollupOptions: {
-            external: ['react'],
+            external: ['react', 'idb-keyval'],
             output: {
                 globals: {
                     react: 'React',
+                    'idb-keyval': 'idbKeyval',
                 },
             },
         },
