@@ -1,7 +1,6 @@
+export type UnknownDataResponseType = Array<unknown> | Record<string, unknown> | undefined
 export type StringAnyTuple = [string, any]
 export type ArrayOfStringAnyTuple = Array<StringAnyTuple>
-export type createArrayOfUpdatesType = (oldRecord: Record<string, any>, newRecord: Record<string, any>) => ArrayOfStringAnyTuple
-
 export type WorkerResponseType = MessageEvent<{
     type: string;
     data?: UnknownDataResponseType
@@ -13,7 +12,7 @@ export interface FetchWorkerBaseRequestType {
     middleware?: (data: UnknownDataResponseType) => UnknownDataResponseType
     url: RequestInfo | URL
 }
-export interface FetchWorkerRequestType extends FetchWorkerBaseRequestType {
+export interface FetchWorkerRequestType extends Omit<FetchWorkerBaseRequestType, "middleware"> {
     middleware?: string
 }
 

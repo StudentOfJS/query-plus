@@ -10,12 +10,12 @@ export declare function useFetch(): {
     error: any;
     loading: boolean;
     preload: boolean;
-    data: import("../utils").UnknownDataResponseType;
+    data: import("../types").UnknownDataResponseType;
     update: boolean;
     fetchWorker: ({ url, options, maxAge, preferUseCache, middleware }: FetchWorkerProps) => Promise<void>;
 } | {
     loading: any;
-    data: import("../utils").UnknownDataResponseType;
+    data: import("../types").UnknownDataResponseType;
     error?: Error | undefined;
     preload: boolean;
     update: boolean;
