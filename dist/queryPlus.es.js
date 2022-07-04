@@ -85,11 +85,12 @@ function usePreFetch(prefetch) {
 const useEventListener = ({
   eventName,
   handler,
-  element = window.document.body,
   options = {}
 }) => {
   const savedHandler = useRef();
+  const removeHanlder = useRef();
   const { capture, passive, once } = options;
+  const element = window.document.body;
   useEffect(() => {
     savedHandler.current = handler;
   }, [handler]);
@@ -101,16 +102,18 @@ const useEventListener = ({
     const eventListener = (event) => savedHandler.current && savedHandler.current(event);
     const opts = { capture, passive, once };
     element.addEventListener(eventName, eventListener, opts);
-    return () => {
-      element.removeEventListener(eventName, eventListener, opts);
-    };
+    const remove = () => element.removeEventListener(eventName, eventListener, opts);
+    removeHanlder.current = remove;
+    return remove;
   }, [eventName, element, capture, passive, once]);
+  return [removeHanlder.current];
 };
 function useIntent({ expandTarget = 0, targetRef, prefetch, timeToExcecute = 1e3 }) {
   const [prefetchConfig, setprefetchConfig] = useState();
+  const [once, setOnce] = useState(false);
   const timer = useRef();
   usePreFetch(prefetchConfig);
-  useEventListener({
+  const [remove] = useEventListener({
     eventName: "mousemove",
     handler: ({ clientX, clientY }) => {
       var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
@@ -119,9 +122,12 @@ function useIntent({ expandTarget = 0, targetRef, prefetch, timeToExcecute = 1e3
       let top = ((_h = (_g = targetRef.current) == null ? void 0 : _g.offsetTop) != null ? _h : 0) - expandTarget;
       let bottom = ((_j = (_i = targetRef.current) == null ? void 0 : _i.offsetTop) != null ? _j : 0) + ((_l = (_k = targetRef.current) == null ? void 0 : _k.offsetHeight) != null ? _l : 0) + expandTarget;
       if (clientX > left && clientX < right && clientY > top && clientY < bottom) {
+        console.info("in target area");
         if (!timer.current) {
           timer.current = setTimeout(() => {
             setprefetchConfig(prefetch);
+            setOnce(true);
+            remove && remove();
           }, timeToExcecute);
         }
       } else {
@@ -131,7 +137,7 @@ function useIntent({ expandTarget = 0, targetRef, prefetch, timeToExcecute = 1e3
         }
       }
     },
-    options: { passive: true }
+    options: { passive: true, once }
   });
   useEffect(() => () => {
     clearTimeout(timer.current);
