@@ -125,6 +125,7 @@ Data fetching, data processing and data storage tasks run in a web worker. This 
 -  ideally the data in the response should be below 100kB per request.
 
 -  storage limit - At least 1GB, but can be up to 60% of remaining disk space.
+-  react >=16.8.0
 
   
   
