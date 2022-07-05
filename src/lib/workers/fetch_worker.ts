@@ -105,12 +105,11 @@ self.addEventListener(
 				getData(url.toString())
 					.then(
 						(value: ValueType) => {
-							if (!value) {
-								throw new Error("no value found in db");
-							}
-							if (dataExpired(value?.maxAge, value?.timestamp)) {
+							if (!value || dataExpired(value?.maxAge, value?.timestamp)) {
 								remove(url.toString());
-								throw new Error("data expired");
+								fetch(url, options ? { ...options, signal } : { signal }).then(
+									handleResponse,
+								).then(handleData).catch(handleError)
 							}
 							let match = isMatch(value?.data, existingData);
 							let postMessageData = {
