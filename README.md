@@ -67,21 +67,31 @@ usePrefetch to pre fetch data and save it for faster retrival later.
 
   
 
-##  FetchWithIntent
+##  useIntent
 
-This is a React component used for prefetching data based on a user's percieved intent.
+This is a React hook used for prefetching data based on a user's percieved intent.
 
   ### example
 
-    <FetchWithIntent timeToExcecute={1000} prefetch={[{  url:  'https://swapi.dev/api/people/3/'  }]}>
-        <div className="App">
+    function App() {
+      const ref = useRef<HTMLDivElement>(null)
+      useIntent<HTMLDivElement>({prefetch:[{ url: 'https://swapi.dev/api/people/3/' }],targetRef: ref, expandTarget: 100, timeToExcecute: 2000 })
+      return (
+        <div ref={ref}>
+          <div className="App">
             <Droid />
+          </div>
         </div>
-    </FetchWithIntent>
+        
+      )
+    }
+
 ### props
 
- - timeToExecute - optional time in ms required for the user to have their mouse cursor in the boundaries of the component before prefetch is initiated. Defaults to 1000.
- - required array of fetch objects. See usePreFetch above.
+ - expandTarget - optional number, increase the target boundary beyond your element.
+ - timeToExecute - optional time in ms required for the user to have their mouse cursor in the boundaries of the target area before prefetch is initiated. Defaults to 1000.
+ - prefetch - required array of fetch objects. See usePreFetch above.
+ - targetRef - the refference of the element you wish to use as the target.
 
   
 
@@ -129,9 +139,4 @@ Data fetching, data processing and data storage tasks run in a web worker. This 
 
   
   
-  
-  
-  
-  
-
 Thanks to [Jake Archibald](https://github.com/jakearchibald) for creating [idb-keyval](https://github.com/jakearchibald/idb). Enabling us to easily access indexedDB with a really nice promise based api.
