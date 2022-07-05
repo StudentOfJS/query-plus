@@ -101,8 +101,6 @@ We created Query+ as a React hook library, to make fetching, processing and cach
 
 ###  our goals
 
-  
-
 -  Simple to use
 
 -  Real world performance gains
