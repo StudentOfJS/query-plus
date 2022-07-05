@@ -103,22 +103,22 @@ self.addEventListener(
 			}
 			if (method === "GET") {
 				getData(url.toString())
-					.then(
-						(value: ValueType) => {
-							if (!value || dataExpired(value?.maxAge, value?.timestamp)) {
-								remove(url.toString());
-								fetch(url, options ? { ...options, signal } : { signal }).then(
-									handleResponse,
-								).then(handleData).catch(handleError)
-							}
-							let match = isMatch(value?.data, existingData);
-							let postMessageData = {
-								type: preferUseCache ? "DATA" : match ? "CACHED" : "PRE_LOAD",
-								data: !preferUseCache && match ? undefined : value?.data,
-							};
-							self.postMessage(postMessageData);
-						},
-					)
+					.then((value: ValueType) => {
+						if (!value || dataExpired(value?.maxAge, value?.timestamp)) {
+							self.postMessage({type: "LOADING"});
+							!value && console.log("no value found");
+							value && remove(url.toString());
+							return fetch(url, options ? { ...options, signal } : { signal }).then(
+								handleResponse,
+							).then(handleData).catch(handleError)
+						}
+						let match = isMatch(value?.data, existingData);
+						let postMessageData = {
+							type: preferUseCache ? "DATA" : match ? "CACHED" : "PRE_LOAD",
+							data: !preferUseCache && match ? undefined : value?.data,
+						};
+						self.postMessage(postMessageData);
+					})
 					.catch((err) => {
 						console.info(err?.message);
 						preferUseCache = false;
