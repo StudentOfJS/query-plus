@@ -16,7 +16,7 @@ const handleResponse = (response: Response) => {
 		throw new Error(`HTTP error! Status: ${response.status}`);
 	}
 	if (response.status === 403) {
-		throw new Error(`Unauthorized!`);
+		throw new Error(`403 Unauthorized`);
 	}
 	return response.json();
 };
@@ -27,7 +27,7 @@ const handleError = (error: Error) => {
 };
 self.addEventListener(
 	"message",
-	(event) => {
+	async (event) => {
 		const { type } = event.data;
 		let controller: AbortController | undefined = new AbortController();
 		let signal = controller?.signal;
@@ -44,7 +44,7 @@ self.addEventListener(
 				).then(data => {
 					setData(url.toString(), { timestamp: Date.now(), data: fn(data), maxAge: maxAge })
 						.then(() => { console.log(`saved prefetch ${url}`) })
-						.catch(err => { console.log(`error saving prefetch ${url}`, err) });
+						.catch((err: Error) => { console.log(`error saving prefetch ${url}`, err) });
 				}).catch(() => { console.info("no data found") });
 			})
 		}
@@ -102,28 +102,28 @@ self.addEventListener(
 					.catch(handleError);
 			}
 			if (method === "GET") {
-				getData(url.toString())
-					.then((value: ValueType) => {
-						if (!value || dataExpired(value?.maxAge, value?.timestamp)) {
-							self.postMessage({type: "LOADING"});
-							!value && console.log("no value found");
-							value && remove(url.toString());
-							return fetch(url, options ? { ...options, signal } : { signal }).then(
-								handleResponse,
-							).then(handleData).catch(handleError)
-						}
-						let match = isMatch(value?.data, existingData);
-						let postMessageData = {
-							type: preferUseCache ? "DATA" : match ? "CACHED" : "PRE_LOAD",
-							data: !preferUseCache && match ? undefined : value?.data,
-						};
-						self.postMessage(postMessageData);
-					})
-					.catch((err) => {
+				let fetchData = await getData(url.toString())
+					.then(
+						(value: ValueType) => {
+							if (!value || dataExpired(value?.maxAge, value?.timestamp)) {
+								!value && console.log("no value found");
+								value && remove(url.toString());
+								return true;
+							}
+							let match = isMatch(value?.data, existingData);
+							let postMessageData = {
+								type: preferUseCache ? "DATA" : match ? "CACHED" : "PRE_LOAD",
+								data: !preferUseCache && match ? undefined : value?.data,
+							};
+							self.postMessage(postMessageData);
+							return false
+						}						
+					)
+					.catch((err: Error) => {
 						console.info(err?.message);
 						preferUseCache = false;
 					});
-					if (!preferUseCache) {
+					if (!preferUseCache || fetchData) {
 						self.postMessage({type: "LOADING"});
 						fetch(url, options ? { ...options, signal } : { signal }).then(
 							handleResponse,
