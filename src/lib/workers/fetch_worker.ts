@@ -28,6 +28,7 @@ const handleError = (error: Error) => {
 self.addEventListener(
 	"message",
 	async (event) => {
+	if(event.isTrusted) {
 		const { type } = event.data;
 		let controller: AbortController | undefined = new AbortController();
 		let signal = controller?.signal;
@@ -166,5 +167,8 @@ self.addEventListener(
 					.catch(handleError);
 			}
 		}
+
+	}
+		
 	},
 );

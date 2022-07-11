@@ -11,27 +11,29 @@ export function useFetch() {
     const workerRef = useRef<Worker>();
     const fetchWorker = async ({ url, options, maxAge = DAY, preferUseCache, middleware }: FetchWorkerProps) => {
         let worker = workerRef.current;
-        worker?.addEventListener('message', ({ data: { type, data } }: WorkerResponseType) => {
-            switch (type) {
-                case 'LOADING':
-                    dispatch({ type: 'loading', loading: true });
-                    break;
-                case 'CACHED':
-                case 'COMPLETE':
-                    dispatch({ type: 'loading', loading: false })
-                    break;
-                case 'DATA':
-                    dispatch({ type: 'data', data })
-                    break;
-                case 'PRE_LOAD':
-                    dispatch({ type: 'pre-load', data })
-                    break;
-                default:
-                    dispatch({ type: 'error', error: new Error(type) });
-                    break;
+        worker?.addEventListener('message', ({ isTrusted, data: { type, data } }: WorkerResponseType) => {
+            if (isTrusted) {
+                switch (type) {
+                    case 'LOADING':
+                        dispatch({ type: 'loading', loading: true });
+                        break;
+                    case 'CACHED':
+                    case 'COMPLETE':
+                        dispatch({ type: 'loading', loading: false })
+                        break;
+                    case 'DATA':
+                        dispatch({ type: 'data', data })
+                        break;
+                    case 'PRE_LOAD':
+                        dispatch({ type: 'pre-load', data })
+                        break;
+                    default:
+                        dispatch({ type: 'error', error: new Error(type) });
+                        break;
+                }
             }
         });
-        
+
         worker?.postMessage({ type: 'fetch', url, options, existingData: state.data, middleware: serializeFunction(middleware), maxAge, preferUseCache });
     }
 
