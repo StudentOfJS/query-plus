@@ -2,7 +2,7 @@
   "name": "query-plus",
   "author": "Rod Lewis",
   "description": "Fetch data from a remote API with React",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "license": "MIT",
   "repository": {
     "type": "git",
