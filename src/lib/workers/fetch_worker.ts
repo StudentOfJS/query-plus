@@ -48,6 +48,7 @@ self.addEventListener(
 						.catch((err: Error) => { console.log(`error saving prefetch ${url}`, err) });
 				}).catch(() => { console.info("no data found") });
 			})
+			self.postMessage({ type: "PREFETCH_COMPLETE" });
 		}
 
 		if (type === "fetch") {

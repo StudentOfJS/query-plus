@@ -24,7 +24,6 @@ export function useIntent<T extends HTMLElement>({ expandTarget = 0, targetRef, 
           let top = (targetRef.current?.offsetTop ?? 0) - expandTarget
 					let bottom = (targetRef.current?.offsetTop ?? 0) + (targetRef.current?.offsetHeight ?? 0) + expandTarget
 					if(clientX > left && clientX < right && clientY > top && clientY < bottom) {
-            console.info("in target area")
 						if(!timer.current) {
 							timer.current = setTimeout(() => {
 								setprefetchConfig(prefetch)
