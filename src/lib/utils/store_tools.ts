@@ -5,7 +5,7 @@ import type { UseStore } from "idb-keyval";
 
 export function store () {
     const DB_NAME = "usestore-db";
-    const DB_STORE = "usestore-db";
+    const DB_STORE = "usestore-store";
     const store: UseStore = createStore(DB_NAME, DB_STORE);
     const remove = (key: IDBValidKey) => del(key, store);
     const getData = (key: IDBValidKey) => get(key, store);

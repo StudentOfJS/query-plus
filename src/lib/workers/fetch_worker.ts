@@ -79,7 +79,7 @@ self.addEventListener(
 							console.info("saved data");
 						})
 						.catch(() => {
-							console.info("couldn't access indexedDB to save data");
+							console.error("couldn't access indexedDB to save data");
 						});
 				}
 				self.postMessage({ type: "COMPLETE" });
@@ -108,7 +108,6 @@ self.addEventListener(
 					.then(
 						(value: ValueType) => {
 							if (!value || dataExpired(value?.maxAge, value?.timestamp)) {
-								!value && console.log("no value found");
 								value && remove(url.toString());
 								return true;
 							}
@@ -158,7 +157,7 @@ self.addEventListener(
 								},
 							)
 								.catch(() => {
-									console.info("update store failed");
+									console.error("update store failed");
 								})
 								.finally(() => {
 									self.postMessage({ type: "COMPLETE" });
