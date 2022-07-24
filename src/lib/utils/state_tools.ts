@@ -3,8 +3,8 @@ import type { UnknownDataResponseType } from "../types";
 export interface StateType {
     data: UnknownDataResponseType;
     error?: Error;
-    preload: boolean;
     loading: boolean;
+    preload: boolean;
     update: boolean;
 }
 
