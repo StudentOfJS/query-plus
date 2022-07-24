@@ -1,5 +1,5 @@
 <div align="center"><img src="https://user-images.githubusercontent.com/20704726/176831638-a5c27908-365e-4edc-aac8-c7073fc18dfb.png"  width="200"  alt="Query+ logo"/>  <h1>Query+</h1></div>
-<div align="right"><img src="https://badgen.net/npm/types/query-plus" alt="query-plus types included" />&nbsp;&nbsp; <img src="https://badgen.net/bundlephobia/minzip/query-plus" alt="query-plus minzipped size badge" /> </div>
+<div align="right"><img src="https://badgen.net/npm/types/query-plus" alt="query-plus types included" />&nbsp;<img src="https://badgen.net/bundlephobia/minzip/query-plus" alt="query-plus minzipped size badge" /></div>
 ###  install
 
     yarn add query-plus
